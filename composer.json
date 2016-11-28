@@ -1,0 +1,13 @@
+{
+    "name": "controleonline/user",
+    "description": "Controle Online - User/Login Module",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "User",
+        "Login"
+    ],
+    "homepage": "https://github.com/ControleOnline/user",
+    "require": {
+        "controleonline/core": "*"        
+    }    
+}

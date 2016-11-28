@@ -1,0 +1,45 @@
+<fieldset>
+    <form class="form-horizontal" method="POST" action="/user/change-user">
+        <!-- Form Name -->
+        <legend><?= $this->translate('Create User'); ?></legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="name"><?= $this->translate('Name') ?></label>  
+            <div class="col-md-4">
+                <input value="<?= $this->response['data']->getPeople()->getName(); ?>" id="name" name="name" type="text" placeholder="<?= $this->translate('Enter your name') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
+            <div class="col-md-4">
+                <input value="<?= $this->response['data']->getUsername(); ?>" id="name" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
+            <div class="col-md-4">
+                <input value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="text" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="phone"><?= $this->translate('Phone') ?></label>  
+            <div class="col-md-4">
+                <input id="contact" name="phone" type="text" placeholder="<?= $this->translate('Enter your phone') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="signup"></label>
+            <div class="col-md-4">
+                <button id="signup" name="signup" class="btn btn-success"><?= $this->translate('Change') ?></button>
+            </div>
+        </div>    
+    </form>
+</fieldset>

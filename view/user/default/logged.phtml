@@ -1,0 +1,18 @@
+
+<?php if ($this->response && $this->response['data']) { ?>
+    Olá <?= $this->response['data']->getPeople()->getName(); ?>
+
+    <?= $this->response['data']->getPeople()->getDocument()[0]->getDocumentType()->getDocumentType(); ?>:
+    <?= $this->response['data']->getPeople()->getDocument()[0]->getDocument(); ?>
+    <?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>
+
+<?php } ?>
+
+
+
+
+<?php
+echo '<pre>';
+//print_r($this->response);
+echo '</pre>';
+?>

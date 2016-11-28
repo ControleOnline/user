@@ -1,0 +1,44 @@
+<fieldset>
+    <form class="form-horizontal" method="POST">
+        <!-- Form Name -->
+        <legend><?= $this->translate('Create User'); ?></legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="name"><?= $this->translate('Name') ?></label>  
+            <div class="col-md-4">
+                <input id="name" name="name" type="text" placeholder="<?= $this->translate('Enter your name') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
+            <div class="col-md-4">
+                <input id="name" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+
+        <!-- Password input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="password"><?= $this->translate('Password') ?></label>
+            <div class="col-md-4">
+                <input id="password" name="password" type="password" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+        <!-- Confirm input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="confirm-password"><?= $this->translate('Confirm your Password') ?></label>
+            <div class="col-md-4">
+                <input id="password" name="confirm-password" type="password" placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="signup"></label>
+            <div class="col-md-4">
+                <button id="signup" name="signup" class="btn btn-success"><?= $this->translate('Sign Up') ?></button>
+            </div>
+        </div>    
+    </form>
+</fieldset>
