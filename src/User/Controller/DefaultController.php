@@ -27,7 +27,7 @@ class DefaultController extends AbstractController {
             $this->_userModel->login($username, $password);
         }
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(Format::returnData($this->_userModel->getUserSession()));
+            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setTemplate('user/default/profile.phtml');
         } else {
             $this->_view->setTemplate('user/default/login.phtml');
@@ -49,8 +49,8 @@ class DefaultController extends AbstractController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(Format::returnData($this->_userModel->getUserSession()));
-            $this->_view->setTemplate('user/default/logged.phtml');            
+            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
+            $this->_view->setTemplate('user/default/profile.phtml');          
         } else {
             $this->_view->setTemplate('user/default/login.phtml');
         }

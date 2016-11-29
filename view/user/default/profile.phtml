@@ -1,8 +1,7 @@
-<fieldset>
-    <form class="form-horizontal" method="POST" action="/user/change-user">
+<form class="form-horizontal" method="POST" action="/user/change-user">
+    <fieldset>
         <!-- Form Name -->
         <legend><?= $this->translate('Create User'); ?></legend>
-
         <!-- Text input-->
         <div class="form-group">
             <label class="col-md-4 control-label" for="name"><?= $this->translate('Name') ?></label>  
@@ -36,10 +35,10 @@
 
         <!-- Button -->
         <div class="form-group">
-            <label class="col-md-4 control-label" for="signup"></label>
+            <label class="col-md-4 control-label" for="change"></label>
             <div class="col-md-4">
-                <button id="signup" name="signup" class="btn btn-success"><?= $this->translate('Change') ?></button>
+                <button id="change" name="change" class="btn btn-success"><?= $this->translate('Change') ?></button>
             </div>
         </div>    
-    </form>
-</fieldset>
+    </fieldset>
+</form>

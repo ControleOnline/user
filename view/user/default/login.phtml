@@ -4,26 +4,27 @@
         <legend>Login</legend>
         <!-- Text input-->
         <div class="form-group">
-            <label class="col-md-4 control-label" for="username">Username</label>  
+            <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
             <div class="col-md-4">
-                <input id="username" name="username" type="text" placeholder="Enter your Username" class="form-control input-md" required>
+                <input id="username" name="username" type="text" placeholder="<?= $this->translate('Enter your Username') ?>" class="form-control input-md" required>
             </div>
         </div>
         <!-- Password input-->
         <div class="form-group">
-            <label class="col-md-4 control-label" for="password">Password</label>
+            <label class="col-md-4 control-label" for="password"><?= $this->translate('Password') ?></label>
             <div class="col-md-4">
-                <input id="password" name="password" type="password" placeholder="Enter a password" class="form-control input-md" required>
+                <input id="password" name="password" type="password" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
             </div>
         </div>
         <!-- Button -->
         <div class="form-group">
             <label class="col-md-4 control-label" for="login"></label>
             <div class="col-md-4">
-                <button id="login" name="login" class="btn btn-success">Login</button>
+                <button id="login" name="login" class="btn btn-success"><?= $this->translate('Login') ?></button>
             </div>
         </div>
-
+        <a class="pull-left" href="/user/create-account"><?= $this->translate('Create Account') ?></a>       
+        <a class="pull-right" href="/user/forgot-password"><?= $this->translate('Forgot password ?') ?></a>
     </fieldset>
 </form>
 <?php
