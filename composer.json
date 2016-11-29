@@ -6,6 +6,14 @@
         "User",
         "Login"
     ],
+    "autoload": {
+        "psr-4": {
+            "User\\": "src/User"
+        },
+        "classmap": [
+            "Module.php"
+        ]
+    },
     "homepage": "https://github.com/ControleOnline/user",
     "require": {
         "controleonline/core": "*"        

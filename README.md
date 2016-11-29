@@ -145,5 +145,5 @@ http://localhost/user/forgot-username
 
 ### Change User ###
 ```
-http://localhost/user/change-user
+http://localhost/user/profile
 ```
