@@ -3,6 +3,8 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/ControleOnline/user/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ControleOnline/user/)
 [![Build Status](https://scrutinizer-ci.com/g/ControleOnline/user/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ControleOnline/user/)
 
+More on [Controle Online](http://controleonline.com "Controle Online").
+
 # User management and login #
 
 
