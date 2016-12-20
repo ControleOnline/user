@@ -19,6 +19,9 @@ class Module {
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        $viewModel = $e->getApplication()->getMvcEvent()->getViewModel();
+        $viewModel->userModel = new \User\Model\UserModel();
+        $viewModel->userModel->initialize($e->getApplication()->getServiceManager());
     }
 
     public function getConfig() {

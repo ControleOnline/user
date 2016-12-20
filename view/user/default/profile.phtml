@@ -21,7 +21,7 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
             <div class="col-md-4">
-                <input value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="text" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
+                <input value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="email" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
             </div>
         </div>
 
