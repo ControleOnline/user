@@ -1,44 +1,149 @@
-<form class="form-horizontal" method="POST" action="/user/change-user">
-    <fieldset>
-        <!-- Form Name -->
-        <legend><?= $this->translate('Create User'); ?></legend>
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="name"><?= $this->translate('Name') ?></label>  
-            <div class="col-md-4">
-                <input value="<?= $this->response['data']->getPeople()->getName(); ?>" id="name" name="name" type="text" placeholder="<?= $this->translate('Enter your name') ?>" class="form-control input-md" required>
-            </div>
-        </div>
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
-            <div class="col-md-4">
-                <input value="<?= $this->response['data']->getUsername(); ?>" id="name" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
-            </div>
-        </div>
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#dados-usuario" data-toggle="tab">DADOS DO USUÁRIO</a>
+        </li>
+        <li>
+            <a href="#dados-empresa" data-toggle="tab">DADOS DA EMPRESA</a>
+        </li>
+    </ul>
+    <div class="tab-content">
 
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
-            <div class="col-md-4">
-                <input value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="email" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
+        <div class="tab-pane active" id="dados-usuario">
+            <div class="row">
+                <div class="container" id="user-container">
+                    <form class="form-horizontal" method="POST" action="/user/change-user">
+                        <fieldset>
+                            <!-- Form Name -->
+                            <legend><?= $this->translate('Change User'); ?></legend>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="name"><?= $this->translate('Name') ?></label>  
+                                <div class="col-md-4">
+                                    <input value="<?= $this->response['data']->getPeople()->getName(); ?>" id="name" name="name" type="text" placeholder="<?= $this->translate('Enter your name') ?>" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
+                                <div class="col-md-4">
+                                    <input value="<?= $this->response['data']->getUsername(); ?>" id="name" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <!-- Button -->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="change-user"></label>
+                                <div class="col-md-4">                                    
+                                    <button class="pull-left btn" data-toggle="collapse" data-target="#change-password-container"><?= $this->translate('Change password?') ?></button>
+                                    <button class="pull-right btn btn-success" id="change" name="change-user"><?= $this->translate('Change') ?></button>
+                                </div>                
+
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="container collapse" id="change-password-container">
+                    <form class="form-horizontal" method="POST" action="/user/change-password">
+                        <fieldset>
+                            <!-- Form Name -->
+                            <legend><?= $this->translate('Change Password'); ?></legend>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="password"><?= $this->translate('Current Password') ?></label>  
+                                <div class="col-md-4">
+                                    <input value="" id="password" name="password" type="text" placeholder="<?= $this->translate('Enter your current password') ?>" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="new-password"><?= $this->translate('New Password') ?></label>  
+                                <div class="col-md-4">
+                                    <input id="new-password" name="new-password" type="text" placeholder="<?= $this->translate('Enter a new password') ?>" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="repeat-password"><?= $this->translate('Repeat Password') ?></label>  
+                                <div class="col-md-4">
+                                    <input id="repeat-password" name="repeat-password" type="text" placeholder="<?= $this->translate('Repeat a new password') ?>" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <!-- Button -->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="change-password"></label>
+                                <div class="col-md-4">
+                                    <button id="change" name="change-password" class="btn btn-danger"><?= $this->translate('Change Passord') ?></button>
+                                </div>                                                                                        
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-file">
+                                        </span>E-MAILS</a>
+                                    <i class="fa fa-plus pull-right" data-add="/api/user/<?= $this->response['data']->getPeople()->getId() ?>/email.form" aria-hidden="true"></i>
+                                </h4>
+                            </div>                            
+                            <div id="collapseOne" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <!-- Text input-->
+                                    <div class="form-group row">
+                                        <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
+                                        <div class="col-md-4">
+                                            <input data-mask="<?= '({
+    mask: \'*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]\',
+    greedy: false,
+    onBeforePaste: function (pastedValue, opts) {
+      pastedValue = pastedValue.toLowerCase();
+      return pastedValue.replace(\'mailto:\', \'\');
+    },
+    definitions: {
+      \'*\': {
+        validator:\'[0-9A-Za-z!#$%&\\\'*+/=?^_`{|}~\-]\',
+        cardinality: 1,
+        casing: \'lower\'
+      }
+    }
+  })'; ?>" value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="text" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span class="glyphicon glyphicon-th-list">
+                                        </span>TELEFONES</a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <!-- Text input-->
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label" for="phone"><?= $this->translate('Phone') ?></label>  
+                                        <div class="col-md-4">
+                                            <input data-mask="({mask: ['(99) 9999-9999', '(99) 99999-9999' ],keepStatic: true})" id="phone" name="phone" type="text" placeholder="<?= $this->translate('Enter your phone') ?>" class="form-control input-md" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="tab-pane" id="dados-empresa">
 
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="phone"><?= $this->translate('Phone') ?></label>  
-            <div class="col-md-4">
-                <input id="contact" name="phone" type="text" placeholder="<?= $this->translate('Enter your phone') ?>" class="form-control input-md" required>
-            </div>
         </div>
+    </div>
 
-        <!-- Button -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="change"></label>
-            <div class="col-md-4">
-                <button id="change" name="change" class="btn btn-success"><?= $this->translate('Change') ?></button>
-            </div>
-        </div>    
-    </fieldset>
-</form>
+</div>
+
+
+
