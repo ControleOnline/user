@@ -44,7 +44,7 @@ class DefaultController extends AbstractController {
         return $this->_view;
     }
 
-    public function indexAction() {
+    public function indexAction() {        
         $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
@@ -66,7 +66,7 @@ class DefaultController extends AbstractController {
         $password = $this->params()->fromPost('password');
         $confirm_password = $this->params()->fromPost('confirm-password');
 
-        if ($username && !$this->_userModel->loggedIn()) {
+        if ($username && $this->_userModel->loggedIn()) {
             $this->_userModel->changeUser($username, $name, $password, $confirm_password);
         }
         if ($this->_userModel->loggedIn()) {
