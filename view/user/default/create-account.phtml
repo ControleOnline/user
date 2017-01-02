@@ -14,7 +14,7 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
             <div class="col-md-4">
-                <input id="name" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+                <input id="name" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="server" data-validation-url="/user/user-exists.json" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
             </div>
         </div>
 
@@ -22,14 +22,14 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="password"><?= $this->translate('Password') ?></label>
             <div class="col-md-4">
-                <input id="password" name="password" type="password" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
+                <input id="password" name="password" type="password" data-validation="strength" data-validation-strength="2" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
             </div>
         </div>
         <!-- Confirm input-->
         <div class="form-group">
             <label class="col-md-4 control-label" for="confirm-password"><?= $this->translate('Confirm your Password') ?></label>
             <div class="col-md-4">
-                <input id="password" name="confirm-password" type="password" placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
+                <input id="password" name="confirm-password" type="password" data-validation="confirmation" data-validation-confirm="password"  placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
             </div>
         </div>
 

@@ -44,13 +44,13 @@ class DefaultController extends AbstractController {
         return $this->_view;
     }
 
-    public function indexAction() {        
+    public function indexAction() {
         $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setTemplate('user/default/profile.phtml');          
+            $this->_view->setTemplate('user/default/profile.phtml');
         } else {
             $this->_view->setTemplate('user/default/login.phtml');
         }
@@ -85,6 +85,27 @@ class DefaultController extends AbstractController {
 
     public function forgotUsername() {
         $this->_view = new ViewModel();
+        return $this->_view;
+    }
+
+    public function userExistsAction() {
+        $this->_view = new ViewModel();
+        $response = array(
+            'valid' => false,
+            'message' => 'Post argument "user" is missing.'
+        );
+
+        if (isset($_POST['user'])) {
+            $user = 'xxx';
+            if ($user) {
+                // User name is registered on another account
+                $response = array('valid' => false, 'message' => 'This user name is already registered.');
+            } else {
+                // User name is available
+                $response = array('valid' => true);
+            }
+        }
+        $this->_view->setVariables($response);
         return $this->_view;
     }
 
