@@ -40,8 +40,11 @@ class DefaultController extends AbstractController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $this->_userModel->logout();
-        $this->_view->setTemplate('user/default/login.phtml');
-        return $this->_view;
+
+        $renderer = $this->serviceLocator->get('Zend\View\Renderer\RendererInterface');
+        $url = $renderer->basePath('/user/login');
+
+        return $this->redirect()->toUrl($url);
     }
 
     public function indexAction() {
