@@ -1,29 +1,56 @@
-<form class="form-horizontal" action="/user/login" method="POST">
-    <fieldset>
-        <!-- Form Name -->
-        <legend>Login</legend>
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="username"><?= $this->translate('Username') ?></label>  
-            <div class="col-md-4">
-                <input id="username" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="length" data-validation-backend="x" data-validation-length="3-15" name="username" type="text" placeholder="<?= $this->translate('Enter your Username') ?>" class="form-control input-md" required>
+<div class="app-container app-login">
+    <div class="flex-center">
+        <div class="app-header"></div>
+        <div class="app-body">
+            <div class="loader-container text-center">
+                <div class="icon">
+                    <div class="sk-folding-cube">
+                        <div class="sk-cube1 sk-cube"></div>
+                        <div class="sk-cube2 sk-cube"></div>
+                        <div class="sk-cube4 sk-cube"></div>
+                        <div class="sk-cube3 sk-cube"></div>
+                    </div>
+                </div>
+                <div class="title">Logging in...</div>
             </div>
+            <div class="app-block">
+                <div class="app-form">
+                    <div class="form-header">
+                        <div class="app-brand"><?= $this->translate('Panel') ?> <span class="highlight"><?= $this->translate('Application Name') ?></span></div>
+                    </div>
+                    <form class="form-horizontal" action="/user/login" method="POST">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">
+                                <i class="fa fa-user" aria-hidden="true"></i></span>              
+                            <input id="username" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="length" data-validation-backend="x" data-validation-length="3-15" name="username" type="text" placeholder="<?= $this->translate('Enter your Username') ?>" class="form-control input-md" required>                            
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">
+                                <i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input id="password" name="password" type="password" data-validation="required" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
+                        </div>
+                        <div class="text-center">
+                            <button id="login" name="login" class="btn btn-success btn-submit"><?= $this->translate('Login') ?></button>                            
+                        </div>
+                    </form>
+
+                    <div class="form-line">
+                        <div class="title">OR</div>
+                    </div>
+                    <div class="form-footer">
+                        <button type="button" class="btn btn-default btn-sm btn-social __facebook">
+                            <div class="info">
+                                <i class="icon fa fa-facebook-official" aria-hidden="true"></i>
+                                <span class="title">Login with Facebook</span>
+                            </div>
+                        </button>
+                    </div>
+                    <a class="pull-left" href="/user/create-account"><?= $this->translate('Create Account') ?></a>       
+                    <a class="pull-right" href="/user/forgot-password"><?= $this->translate('Forgot password ?') ?></a>
+                </div>                
+            </div>            
         </div>
-        <!-- Password input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="password"><?= $this->translate('Password') ?></label>
-            <div class="col-md-4">
-                <input id="password" name="password" type="password" data-validation="required" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
-            </div>
+        <div class="app-footer">
         </div>
-        <!-- Button -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="login"></label>
-            <div class="col-md-4">
-                <button id="login" name="login" class="btn btn-success"><?= $this->translate('Login') ?></button>
-            </div>
-        </div>
-        <a class="pull-left" href="/user/create-account"><?= $this->translate('Create Account') ?></a>       
-        <a class="pull-right" href="/user/forgot-password"><?= $this->translate('Forgot password ?') ?></a>
-    </fieldset>
-</form>
+    </div>
+</div>
