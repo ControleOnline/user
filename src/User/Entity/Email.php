@@ -33,7 +33,7 @@ class Email
      *
      * @ORM\Column(name="confirmed", type="boolean", nullable=false)
      */
-    private $confirmed;
+    private $confirmed = '0';
 
     /**
      * @var \Entity\People

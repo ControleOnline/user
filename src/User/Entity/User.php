@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * User
  *
- * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="user_name", columns={"username"})}, indexes={@ORM\Index(name="people_id", columns={"people_id"})})
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="user_name", columns={"username"}), @ORM\UniqueConstraint(name="image_id", columns={"image_id"})}, indexes={@ORM\Index(name="people_id", columns={"people_id"})})
  * @ORM\Entity
  */
 class User
@@ -44,6 +44,16 @@ class User
      * })
      */
     private $people;
+
+    /**
+     * @var \Entity\Image
+     *
+     * @ORM\ManyToOne(targetEntity="Entity\Image")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="image_id", referencedColumnName="id")
+     * })
+     */
+    private $image;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -137,6 +147,29 @@ class User
     public function getPeople()
     {
         return $this->people;
+    }
+
+    /**
+     * Set image
+     *
+     * @param \Entity\Image $image
+     * @return User
+     */
+    public function setImage(\Entity\Image $image = null)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \Entity\Image 
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 
     /**
