@@ -4,22 +4,18 @@ namespace User\Controller;
 
 use Doctrine\ORM\EntityManager;
 use User\Model\UserModel;
-use Core\Controller\AbstractController;
-use Zend\View\Model\ViewModel;
 use Core\Helper\Format;
 use Core\Model\ErrorModel;
 
-class DefaultController extends AbstractController {
+class DefaultController extends \Core\Controller\DefaultController {
 
     /**
      * @var EntityManager
      */
     protected $_em;
     protected $_userModel;
-    protected $_view;
 
     public function loginAction() {
-        $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $username = $this->params()->fromPost('username');
@@ -37,7 +33,6 @@ class DefaultController extends AbstractController {
     }
 
     public function logoutAction() {
-        $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $this->_userModel->logout();
@@ -49,7 +44,6 @@ class DefaultController extends AbstractController {
     }
 
     public function indexAction() {
-        $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
@@ -63,26 +57,23 @@ class DefaultController extends AbstractController {
 
     public function getImageProfileAction() {
         $usermame = $this->params()->fromQuery('username');
-
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $user = $this->_userModel->getEntity()->findOneBy(array('username' => $usermame));
-
-        echo json_encode(Format::returnData($user ? array(
-                            'user' => array(
-                                'name' => ucwords(strtolower($user->getPeople()->getName())),
-                                'image' => array(
-                                    'url' => $user->getImage()->getUrl()
-                                )
-                            )) : ErrorModel::addError('User not found')));
-        exit;
+        $this->_view->setVariables($user ? array(
+                    'user' => array(
+                        'name' => ucwords(strtolower($user->getPeople()->getName())),
+                        'image' => array(
+                            'url' => $user->getImage()->getUrl()
+                        )
+                    )) : ErrorModel::addError('User not found'));
+        return $this->_view;
     }
 
     public function profileImageAction() {
         $defaultImgProfile = 'public/img/default/profile.png';
         $userId = $this->params()->fromQuery('id');
         if ($userId) {
-            $this->_view = new ViewModel();
             $this->_userModel = new UserModel();
             $this->_userModel->initialize($this->serviceLocator);
             $user = $this->_userModel->getEntity()->find($userId);
@@ -99,7 +90,6 @@ class DefaultController extends AbstractController {
     }
 
     public function profileAction() {
-        $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $name = $this->params()->fromPost('name');
@@ -120,17 +110,14 @@ class DefaultController extends AbstractController {
     }
 
     public function forgotPassword() {
-        $this->_view = new ViewModel();
         return $this->_view;
     }
 
     public function forgotUsername() {
-        $this->_view = new ViewModel();
         return $this->_view;
     }
 
     public function userExistsAction() {
-        $this->_view = new ViewModel();
         $response = array(
             'valid' => false,
             'message' => 'Post argument "user" is missing.'
@@ -151,7 +138,6 @@ class DefaultController extends AbstractController {
     }
 
     public function createAccountAction() {
-        $this->_view = new ViewModel();
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $name = $this->params()->fromPost('name');
