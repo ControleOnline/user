@@ -7,6 +7,7 @@ use User\Model\UserModel;
 use Core\Controller\AbstractController;
 use Zend\View\Model\ViewModel;
 use Core\Helper\Format;
+use Core\Model\ErrorModel;
 
 class DefaultController extends AbstractController {
 
@@ -67,14 +68,13 @@ class DefaultController extends AbstractController {
         $this->_userModel->initialize($this->serviceLocator);
         $user = $this->_userModel->getEntity()->findOneBy(array('username' => $usermame));
 
-        echo json_encode(Format::returnData(array(
-                    'user' => array(
-                        'name' => $user->getPeople()->getName(),
-                        'image' => array(
-                            'url' => $user->getImage()->getUrl()
-                        )
-                    )
-        )));
+        echo json_encode(Format::returnData($user ? array(
+                            'user' => array(
+                                'name' => ucwords(strtolower($user->getPeople()->getName())),
+                                'image' => array(
+                                    'url' => $user->getImage()->getUrl()
+                                )
+                            )) : ErrorModel::addError('User not found')));
         exit;
     }
 
