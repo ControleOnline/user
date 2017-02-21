@@ -60,7 +60,25 @@ class DefaultController extends AbstractController {
         return $this->_view;
     }
 
-    public function profileImgAction() {
+    public function getImageProfileAction() {
+        $usermame = $this->params()->fromQuery('username');
+
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $user = $this->_userModel->getEntity()->findOneBy(array('username' => $usermame));
+
+        echo json_encode(Format::returnData(array(
+                    'user' => array(
+                        'name' => $user->getPeople()->getName(),
+                        'image' => array(
+                            'url' => $user->getImage()->getUrl()
+                        )
+                    )
+        )));
+        exit;
+    }
+
+    public function profileImageAction() {
         $defaultImgProfile = 'public/img/default/profile.png';
         $userId = $this->params()->fromQuery('id');
         if ($userId) {
