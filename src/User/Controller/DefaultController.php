@@ -71,7 +71,7 @@ class DefaultController extends \Core\Controller\DefaultController {
     }
 
     public function profileImageAction() {
-        $defaultImgProfile = 'public/img/default/profile.png';
+        $defaultImgProfile = 'public/assets/img/default/profile.png';
         $userId = $this->params()->fromQuery('id');
         if ($userId) {
             $this->_userModel = new UserModel();
