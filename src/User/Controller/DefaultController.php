@@ -60,13 +60,13 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $user = $this->_userModel->getEntity()->findOneBy(array('username' => $usermame));
-        $this->_view->setVariables($user ? array(
-                    'user' => array(
-                        'name' => ucwords(strtolower($user->getPeople()->getName())),
-                        'image' => array(
-                            'url' => $user->getImage()->getUrl()
-                        )
-                    )) : ErrorModel::addError('User not found'));
+        $this->_view->setVariables($user ? Format::returnData(array(
+                            'user' => array(
+                                'name' => ucwords(strtolower($user->getPeople()->getName())),
+                                'image' => array(
+                                    'url' => $user->getImage()->getUrl()
+                                )
+                    ))) : ErrorModel::addError('User not found'));
         return $this->_view;
     }
 
