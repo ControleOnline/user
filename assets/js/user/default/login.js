@@ -1,4 +1,4 @@
-define('user_default_login', function () {
+define('user-default-login', function () {
     var user = {};
     user.init = function () {
         require(['jquery', 'core', 'jquery-form-validator'], function ($, core) {
