@@ -44,7 +44,7 @@
                     <div class="form-suggestion">
                         <?= $this->translate('Create Account'); ?>
                     </div>
-                    <form method="POST">
+                    <form id="create-account-form" class="form-horizontal" action="/user/create-account" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i></span>
@@ -52,16 +52,21 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon2">
-                                <i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input id="name" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="server" data-validation-url="/user/user-exists.json" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+                                <i class="fa fa-envelope" aria-hidden="true"></i></span>
+                            <input id="email" data-mask="({mask: '*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]',greedy: false,onBeforePaste: function (pastedValue, opts) {pastedValue = pastedValue.toLowerCase();return pastedValue.replace('mailto:', '');},definitions: {'*': {validator:'[0-9A-Za-z!#$%&\'*+/=?^_`{|}~\-]',cardinality: 1,casing: 'lower'}}})" name="email" type="text" placeholder="<?= $this->translate('Enter your e-mail') ?>" class="form-control input-md" required>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon3">
+                                <i class="fa fa-user" aria-hidden="true"></i></span>
+                            <input id="username" data-user-in-use="/user/user-in-use/username/" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" name="username" type="text" placeholder="<?= $this->translate('Enter your username') ?>" class="form-control input-md" required>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon4">
                                 <i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="password" name="password" type="password" data-validation="strength" data-validation-strength="2" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon4">
+                            <span class="input-group-addon" id="basic-addon5">
                                 <i class="fa fa-check" aria-hidden="true"></i></span>
                             <input id="password" name="confirm-password" type="password" data-validation="confirmation" data-validation-confirm="password"  placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
                         </div>

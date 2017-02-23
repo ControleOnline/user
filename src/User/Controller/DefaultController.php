@@ -55,6 +55,16 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $this->_view;
     }
 
+    public function userInUseAction() {
+        $usermame = $this->params()->fromQuery('username');
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $user = $this->_userModel->getEntity()->findOneBy(array('username' => $usermame));
+        $this->_view->setVariables(array('data' => false));
+        $user ? ErrorModel::addError('User in use') : false;
+        return $this->_view;
+    }
+
     public function getImageProfileAction() {
         $usermame = $this->params()->fromQuery('username');
         $this->_userModel = new UserModel();
@@ -114,26 +124,6 @@ class DefaultController extends \Core\Controller\DefaultController {
     }
 
     public function forgotUsername() {
-        return $this->_view;
-    }
-
-    public function userExistsAction() {
-        $response = array(
-            'valid' => false,
-            'message' => 'Post argument "user" is missing.'
-        );
-
-        if (isset($_POST['user'])) {
-            $user = 'xxx';
-            if ($user) {
-                // User name is registered on another account
-                $response = array('valid' => false, 'message' => 'This user name is already registered.');
-            } else {
-                // User name is available
-                $response = array('valid' => true);
-            }
-        }
-        $this->_view->setVariables($response);
         return $this->_view;
     }
 
