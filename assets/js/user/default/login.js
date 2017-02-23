@@ -1,56 +1,54 @@
-define('user-default-login', function () {
+define('user-default-login', ['jquery', 'jquery-form-validator'], function () {
     var user = {};
     user.init = function () {
-        require(['jquery', 'core', 'jquery-form-validator'], function ($, core) {
-            $('.profile-image').on('load', function () {
-                $(this).fadeIn(1000);
-            });
-            $('#login-form').submit(function (e) {
-                e.preventDefault();
-                if ($(this).isValid()) {
+        $('.profile-image').on('load', function () {
+            $(this).fadeIn(1000);
+        });
+        $('#login-form').submit(function (e) {
+            e.preventDefault();
+            if ($(this).isValid()) {
+                $.ajax({
+                    url: $(this).attr('action') + '.json',
+                    data: $(this).serialize(),
+                    method: 'POST',
+                    dataType: 'json',
+                    global: false,
+                    success: function (data) {
+                        $('#wait-modal').modal('hide');
+                        if (data.response && data.response.success) {
+                            window.location.href = $('#login-form').data('success-url') ? $('#login-form').data('success-url') : '/';
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#username').blur(function () {
+            var userField = $(this);
+            setTimeout(function () {
+                if (userField.closest('form').isValid()) {
                     $.ajax({
-                        url: $(this).attr('action') + '.json',
-                        data: $(this).serialize(),
-                        method: 'POST',
+                        url: userField.data('get-image-profile') + userField.val() + '.json',
+                        method: 'GET',
                         dataType: 'json',
                         global: false,
                         success: function (data) {
-                            $('#wait-modal').modal('hide');
-                            if (data.response && data.response.success) {
-                                window.location.href = $('#login-form').data('success-url') ? $('#login-form').data('success-url') : '/';
-                            }
+                        },
+                        complete: function (data) {
+                            user.show.profile_image(data);
+                            $('.ajax-spin-username').remove();
+                            $(userField).prop("disabled", false);
+                        },
+                        beforeSend: function () {
+                            $(userField).before('<i class="ajax-spin-username ajax-spin-input ajax-spin fa fa-spinner fa-spin"></i>');
+                            $(userField).prop("disabled", true);
+                        },
+                        error: function () {
+                            user.show.default_profile_image();
                         }
                     });
                 }
-            });
-
-            $('#username').blur(function () {
-                var userField = $(this);
-                setTimeout(function () {
-                    if (userField.closest('form').isValid()) {
-                        $.ajax({
-                            url: userField.data('get-image-profile') + userField.val() + '.json',
-                            method: 'GET',
-                            dataType: 'json',
-                            global: false,
-                            success: function (data) {
-                            },
-                            complete: function (data) {
-                                user.show.profile_image(data);
-                                $('.ajax-spin-username').remove();
-                                $(userField).prop("disabled", false);
-                            },
-                            beforeSend: function () {
-                                $(userField).before(core.show.spin('ajax-spin-username ajax-spin-input'));
-                                $(userField).prop("disabled", true);
-                            },
-                            error: function () {
-                                user.show.default_profile_image();
-                            }
-                        });
-                    }
-                }, 200);
-            });
+            }, 200);
         });
     };
 
