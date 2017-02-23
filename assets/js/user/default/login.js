@@ -1,6 +1,6 @@
-define("user-default-login", function () {
-    var login = {};
-    login.init = function () {        
+define('user-default-login', function () {
+    var user = {};
+    user.init = function () {
         require(['jquery', 'core', 'jquery-form-validator'], function ($, core) {
             $('.profile-image').on('load', function () {
                 $(this).fadeIn(1000);
@@ -36,7 +36,7 @@ define("user-default-login", function () {
                             success: function (data) {
                             },
                             complete: function (data) {
-                                login.show.profile_image(data);
+                                user.show.profile_image(data);
                                 $('.ajax-spin-username').remove();
                                 $(userField).prop("disabled", false);
                             },
@@ -45,7 +45,7 @@ define("user-default-login", function () {
                                 $(userField).prop("disabled", true);
                             },
                             error: function () {
-                                login.show.default_profile_image();
+                                user.show.default_profile_image();
                             }
                         });
                     }
@@ -54,7 +54,7 @@ define("user-default-login", function () {
         });
     };
 
-    login.show = {
+    user.show = {
         profile_image: function (data) {
             if (typeof data === 'object' && data.responseJSON) {
                 var data = JSON.parse(data.responseText);
@@ -64,12 +64,12 @@ define("user-default-login", function () {
                         $('.user-name').html(data.response.data.user.name).fadeIn(1000);
                     });
                 } else {
-                    login.show.default_profile_image();
-                    login.show.default_profile_name();
+                    user.show.default_profile_image();
+                    user.show.default_profile_name();
                 }
             } else {
-                login.show.default_profile_image();
-                login.show.default_profile_name();
+                user.show.default_profile_image();
+                user.show.default_profile_name();
             }
         },
         default_profile_image: function () {
@@ -83,6 +83,5 @@ define("user-default-login", function () {
             });
         }
     };
-
-    return login;
+    return user;
 });
