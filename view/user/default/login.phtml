@@ -1,5 +1,5 @@
-<div class="app-container app-login">
-    <div class="flex-center">
+<div class="app-container app-login">    
+    <div class="flex-center">        
         <div class="app-header"></div>
         <div class="app-body">            
             <div class="app-block">
@@ -12,14 +12,14 @@
                     </div> 
                     <div class="row username-container">
                         <h4>&nbsp;
-                            <span data-user-not-found="<?= $this->translate('User not found') ?>" class="user-name" style="display: none"></span>
+                            <span class="user-name" style="display: none"></span>
                             &nbsp;</h4>
                     </div>
                     <form data-success-url="/" id="login-form" class="form-horizontal" action="/user/login" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-user" aria-hidden="true"></i></span>              
-                            <input data-valide-ajax="true" data-get-image-profile="/user/get-image-profile/username/" id="username" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="length" data-validation-backend="x" data-validation-length="3-15" name="username" type="text" placeholder="<?= $this->translate('Enter your Username') ?>" class="form-control input-md" required>                            
+                            <input data-valide-ajax="true" data-get-image-profile="/user/get-image-profile/username/" id="username" data-mask-regex="({regex: '[a-za-zA-Z0-9]{3,15}'})" data-validation="length user_exists" data-validation-length="3-15" name="username" type="text" placeholder="<?= $this->translate('Enter your Username') ?>" class="form-control input-md" required>                            
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon2">
@@ -30,24 +30,25 @@
                             <button id="login" name="login" class="btn btn-success btn-submit"><?= $this->translate('Login') ?></button>                            
                         </div>
                     </form>
-
-                    <div class="form-line">
-                        <div class="title">OR</div>
-                    </div>
-                    <div class="form-footer">
-                        <button type="button" class="btn btn-default btn-sm btn-social __facebook">
-                            <div class="info">
-                                <i class="icon fa fa-facebook-official" aria-hidden="true"></i>
-                                <span class="title">Login with Facebook</span>
-                            </div>
-                        </button>
-                    </div>
+                    <!--
+                                        <div class="form-line">
+                                            <div class="title">OR</div>
+                                        </div>
+                                        <div class="form-footer">
+                                            <button type="button" class="btn btn-default btn-sm btn-social __facebook">
+                                                <div class="info">
+                                                    <i class="icon fa fa-facebook-official" aria-hidden="true"></i>
+                                                    <span class="title">Login with Facebook</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                    -->
                     <a class="pull-left" href="/user/create-account"><?= $this->translate('Create Account') ?></a>       
                     <a class="pull-right" href="/user/forgot-password"><?= $this->translate('Forgot password ?') ?></a>
                 </div>                
             </div>            
         </div>
-        <div class="app-footer">
+        <div class="app-footer">            
         </div>
-    </div>
+    </div>    
 </div>

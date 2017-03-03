@@ -26,9 +26,9 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($this->_userModel->loggedIn()) {
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setTemplate('user/default/profile.phtml');
-        } else {
+        } else {            
             $this->_view->setTemplate('user/default/login.phtml');
-        }
+        }        
         return $this->_view;
     }
 
