@@ -44,7 +44,7 @@
                     <div class="form-suggestion">
                         <?= $this->translate('Create Account'); ?>
                     </div>
-                    <form id="create-account-form" class="form-horizontal" action="/user/create-account" method="POST">
+                    <form id="create-account-form" class="form-horizontal" data-success-url="/user/profile" action="/user/create-account" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i></span>
@@ -63,7 +63,7 @@
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon4">
                                 <i class="fa fa-key" aria-hidden="true"></i></span>
-                            <input id="password" name="password" type="password" data-validation="strength" data-validation-strength="2" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
+                            <input id="password" name="password" type="password" data-validation-disabled="strength" data-validation-strength="2" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon5">

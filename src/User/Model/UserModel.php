@@ -31,32 +31,41 @@ class UserModel extends DefaultModel implements LoginInterface {
         return $this->_session;
     }
 
-    public function checkUserData($username, $password, $confirm_password) {
+    public function checkUserData($username, $email, $password, $confirm_password) {
         $this->userExists($username);
+        $this->emailExists($email);
         $this->comparePasswords($password, $confirm_password);
         return $this->getErrors() ? false : true;
     }
 
-    protected function persistData($username, $name, $password) {
+    protected function persistData($username, $email, $name, $password) {
 
         $entity_people = new \Entity\People();
         $entity_people->setName($name);
         $this->_em->persist($entity_people);
+
+        $entity_email = new \Entity\Email();
+        $entity_email->setPeople($entity_people);
+        $entity_email->setEmail($email);
+        $this->_em->persist($entity_email);
+
 
         $entity_user = new \Entity\User();
         $entity_user->setPeople($entity_people);
         $entity_user->setUsername($username);
         $entity_user->setHash($this->getHash($password));
         $this->_em->persist($entity_user);
+
+        return $entity_user;
     }
 
-    protected function createUser($username, $name, $password, $confirm_password) {
+    protected function createUser($username, $email, $name, $password, $confirm_password) {
 
-        if (!$this->checkUserData($username, $password, $confirm_password)) {
+        if (!$this->checkUserData($username, $email, $password, $confirm_password)) {
             return;
         }
         try {
-            $entity_people = $this->persistData($username, $name, $password);
+            $entity_people = $this->persistData($username, $email, $name, $password);
             $this->_em->flush();
             $this->_em->clear();
             return $entity_people;
@@ -71,8 +80,8 @@ class UserModel extends DefaultModel implements LoginInterface {
         
     }
 
-    public function createAccount($username, $name, $password, $confirm_password) {
-        $entity_people = $this->createUser($username, $name, $password, $confirm_password);
+    public function createAccount($username, $email, $name, $password, $confirm_password) {
+        $entity_people = $this->createUser($username, $email, $name, $password, $confirm_password);
         $entity_people ? $this->login($username, $password) : false;
         return $entity_people;
     }
@@ -83,6 +92,15 @@ class UserModel extends DefaultModel implements LoginInterface {
             $this->addError(array('message' => 'User %1$s already exists!', 'values' => array('user' => $username)));
         }
         return $user;
+    }
+
+    public function emailExists($email) {
+        $entity_email = $this->_em->getRepository('\Entity\Email');
+        $mail = $entity_email->findOneBy(array('email' => $email));
+        if ($mail) {
+            $this->addError(array('message' => 'Email %1$s in use!', 'values' => array('user' => $email)));
+        }
+        return $mail;
     }
 
     public function login($username, $password) {

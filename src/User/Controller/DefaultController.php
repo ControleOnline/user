@@ -24,11 +24,10 @@ class DefaultController extends \Core\Controller\DefaultController {
             $this->_userModel->login($username, $password);
         }
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setTemplate('user/default/profile.phtml');
-        } else {            
+            return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
+        } else {
             $this->_view->setTemplate('user/default/login.phtml');
-        }        
+        }
         return $this->_view;
     }
 
@@ -36,23 +35,17 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $this->_userModel->logout();
-
-        $renderer = $this->serviceLocator->get('Zend\View\Renderer\RendererInterface');
-        $url = $renderer->basePath('/user/login');
-
-        return $this->redirect()->toUrl($url);
+        return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
     }
 
     public function indexAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setTemplate('user/default/profile.phtml');
+            return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
         } else {
-            $this->_view->setTemplate('user/default/login.phtml');
+            return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
         }
-        return $this->_view;
     }
 
     public function userInUseAction() {
@@ -114,7 +107,7 @@ class DefaultController extends \Core\Controller\DefaultController {
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setTemplate('user/default/profile.phtml');
         } else {
-            $this->_view->setTemplate('user/default/create-account.phtml');
+            return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
         }
         return $this->_view;
     }
@@ -134,14 +127,14 @@ class DefaultController extends \Core\Controller\DefaultController {
         $username = $this->params()->fromPost('username');
         $password = $this->params()->fromPost('password');
         $confirm_password = $this->params()->fromPost('confirm-password');
-
-        if ($username && !$this->_userModel->loggedIn()) {
-            $this->_userModel->createAccount($username, $name, $password, $confirm_password);
-        }
-        if ($this->_userModel->loggedIn()) {
+        $email = $this->params()->fromPost('email');
+        if ($username && !$this->_userModel->loggedIn()) {            
+            $this->_userModel->createAccount($username, $email, $name, $password, $confirm_password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setTemplate('user/default/profile.phtml');
-        } else {
+            $this->_view->setTemplate('user/default/create-account.phtml');
+        } elseif ($this->_userModel->loggedIn()) {            
+            return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
+        } else {            
             $this->_view->setTemplate('user/default/create-account.phtml');
         }
         return $this->_view;
