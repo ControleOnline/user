@@ -20,14 +20,15 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel->initialize($this->serviceLocator);
         $username = $this->params()->fromPost('username');
         $password = $this->params()->fromPost('password');
-        if ($username && $password) {
-            $this->_userModel->login($username, $password);
-        }
-        if ($this->_userModel->loggedIn()) {
+
+        if ((!$username || !$password) && $this->_userModel->loggedIn()) {
             return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
         } else {
+            $this->_userModel->login($username, $password);
+            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setTemplate('user/default/login.phtml');
         }
+
         return $this->_view;
     }
 
@@ -128,13 +129,13 @@ class DefaultController extends \Core\Controller\DefaultController {
         $password = $this->params()->fromPost('password');
         $confirm_password = $this->params()->fromPost('confirm-password');
         $email = $this->params()->fromPost('email');
-        if ($username && !$this->_userModel->loggedIn()) {            
+        if ($username && !$this->_userModel->loggedIn()) {
             $this->_userModel->createAccount($username, $email, $name, $password, $confirm_password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setTemplate('user/default/create-account.phtml');
-        } elseif ($this->_userModel->loggedIn()) {            
+        } elseif ($this->_userModel->loggedIn()) {
             return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
-        } else {            
+        } else {
             $this->_view->setTemplate('user/default/create-account.phtml');
         }
         return $this->_view;
