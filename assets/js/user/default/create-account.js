@@ -1,7 +1,7 @@
 define('user-default-create-account', ['jquery', 'jquery-form-validator'], function () {
     var user = {};
     user.init = function () {
-        $('#login-form').submit(function (e) {
+        $('#create-account-form').submit(function (e) {
             e.preventDefault();
             if ($(this).isValid()) {
                 $.ajax({
@@ -13,7 +13,7 @@ define('user-default-create-account', ['jquery', 'jquery-form-validator'], funct
                     success: function (data) {
                         $('#wait-modal').modal('hide');
                         if (data.response && data.response.success) {
-                            window.location.href = $('#login-form').data('success-url') ? $('#login-form').data('success-url') : '/';
+                            window.location.href = $('#create-account-form').data('success-url') ? $('#create-account-form').data('success-url') : '/';
                         }
                     }
                 });
@@ -39,13 +39,13 @@ define('user-default-create-account', ['jquery', 'jquery-form-validator'], funct
                             }
                         }
                         $('.ajax-spin-username').remove();
-                        $(userField).prop("disabled", false);
+                        $(userField).prop("readonly", false);
 
 
                     },
                     beforeSend: function () {
                         $(userField).before('<i class="ajax-spin-username ajax-spin-input ajax-spin fa fa-spinner fa-spin"></i>');
-                        $(userField).prop("disabled", true);
+                        $(userField).prop("readonly", true);
                     },
                     error: function () {
 
