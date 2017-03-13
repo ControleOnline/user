@@ -18,6 +18,8 @@ class UserModel extends DefaultModel implements LoginInterface {
     protected $_password;
     protected $_hash;
     protected $_salt;
+    protected static $_user;
+    protected static $_company;
 
     const COST = 10;
 
@@ -170,9 +172,15 @@ class UserModel extends DefaultModel implements LoginInterface {
         return $this->_session->user ? true : false;
     }
 
+    public function getUserCompany() {
+        self::$_company = self::$_company ?: $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany();
+        return self::$_company;
+    }
+
     public function getLoggedUser() {
         if ($this->loggedIn()) {
-            return $this->entity->find($this->_session->user->id);
+            self::$_user = self::$_user ?: $this->entity->find($this->_session->user->id);
+            return self::$_user;
         }
     }
 

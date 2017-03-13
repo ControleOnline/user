@@ -14,6 +14,7 @@ class DefaultController extends \Core\Controller\DefaultController {
      */
     protected $_em;
     protected $_userModel;
+    protected $_peopleModel;
 
     public function loginAction() {
         $this->_userModel = new UserModel();
@@ -68,7 +69,7 @@ class DefaultController extends \Core\Controller\DefaultController {
                             'user' => array(
                                 'name' => ucwords(strtolower($user->getPeople()->getName())),
                                 'image' => array(
-                                    'url' => $user->getImage()->getUrl()
+                                    'url' => $user->getPeople()->getImage()->getUrl()
                                 )
                     ))) : ErrorModel::addError('User not found'));
         return $this->_view;
@@ -78,17 +79,19 @@ class DefaultController extends \Core\Controller\DefaultController {
         $defaultImgProfile = 'public/assets/img/default/profile.png';
         $userId = $this->params()->fromQuery('id');
         if ($userId) {
-            $this->_userModel = new UserModel();
-            $this->_userModel->initialize($this->serviceLocator);
-            $user = $this->_userModel->getEntity()->find($userId);
+            $this->_peopleModel = new UserModel();
+            $this->_peopleModel->initialize($this->serviceLocator);
+            $this->_peopleModel->setEntity('Entity\\People');
+            $people = $this->_peopleModel->getEntity()->find($userId);
         }
-        $imageContent = file_get_contents($user && $user->getImage() && is_file($user->getImage()->getPath()) ? $user->getImage()->getPath() : $defaultImgProfile);
+        $file = $people && $people->getImage() && is_file($people->getImage()->getPath()) ? $people->getImage()->getPath() : $defaultImgProfile;
+        $imageContent = file_get_contents($file);
         $response = $this->getResponse();
         $response->setContent($imageContent);
         $response
                 ->getHeaders()
                 ->addHeaderLine('Content-Transfer-Encoding', 'binary')
-                ->addHeaderLine('Content-Type', 'image/png');
+                ->addHeaderLine('Content-Type', exif_imagetype($file));
 
         return $response;
     }
