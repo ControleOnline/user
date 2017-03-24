@@ -7,7 +7,6 @@ use Core\Interfaces\LoginInterface;
 use Core\Model\DefaultModel;
 use Zend\Session\Container;
 use User\Model\ComplexityPasswordmodel;
-use Core\Helper\Format;
 
 class UserModel extends DefaultModel implements LoginInterface {
 
@@ -19,6 +18,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     protected $_hash;
     protected $_salt;
     protected static $_user;
+    protected static $_user_people;
     protected static $_company;
 
     const COST = 10;
@@ -38,6 +38,25 @@ class UserModel extends DefaultModel implements LoginInterface {
         $this->emailExists($email);
         $this->comparePasswords($password, $confirm_password);
         return $this->getErrors() ? false : true;
+    }
+
+    public function addUser($username, $password, $confirm_password) {
+        $current_user = $this->getLoggedUser();
+
+        if ($this->checkUserData($username, microtime(), $password, $confirm_password)) {
+            $entity_user = new \Entity\User();
+            $entity_user->setPeople($current_user->getPeople());
+            $entity_user->setUsername($username);
+            $entity_user->setHash($this->getHash($password));
+            $this->_em->persist($entity_user);
+
+            $this->_em->flush();
+            $this->_em->clear();
+            return array(
+                'id' => $entity_user->getId(),
+                'username' => $entity_user->getUsername()
+            );
+        }
     }
 
     protected function persistData($username, $email, $name, $password) {
@@ -175,6 +194,33 @@ class UserModel extends DefaultModel implements LoginInterface {
     public function getUserCompany() {
         self::$_company = self::$_company ?: $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany();
         return self::$_company;
+    }
+
+    public function delete($id) {
+        if (!$id) {
+            ErrorModel::addError('User id not informed!');
+        } elseif ($id != $this->getLoggedUser()->getId()) {
+            $entity = $this->entity->findOneBy(array(
+                'id' => $id,
+                'people' => $this->getLoggedUser()->getPeople()
+            ));
+            if ($entity) {
+                $this->_em->remove($entity);
+                $this->_em->flush();
+                $this->_em->clear();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            ErrorModel::addError('You can not delete the user you are logged in to!');
+            return false;
+        }
+    }
+
+    public function getLoggedUserPeople() {
+        self::$_user_people = self::$_user_people ? self::$_user_people : $this->entity->findBy(array('people' => $this->getLoggedUser()->getPeople()));
+        return self::$_user_people;
     }
 
     public function getLoggedUser() {

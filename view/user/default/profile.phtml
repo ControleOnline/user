@@ -1,19 +1,7 @@
-<div class="container">
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#dados-usuario" data-toggle="tab">DADOS DO USUÁRIO</a>
-        </li>
-        <li>
-            <a href="#dados-empresa" data-toggle="tab">DADOS DA EMPRESA</a>
-        </li>
-    </ul>
-    <div class="tab-content">
-
-        <div class="tab-pane active" id="dados-usuario">
-            <div class="row">
-                xxx
-                <?= $this->render_entity_form($this->response['data']); ?>
-                xxx
+<div class="row">
+    <div class="col-xs-12">
+        <div class="card">
+            <div id="profile-container">
                 <div class="container collapse" id="change-password-container">
                     <form class="form-horizontal" method="POST" action="/user/change-password">
                         <fieldset>
@@ -50,72 +38,97 @@
                         </fieldset>
                     </form>
                 </div>
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#user"><span class="glyphicon glyphicon-user">
+                                    </span><?= $this->translate('Users') ?></a>
+                                <i class="fa fa-plus pull-right" data-add-form="/user/add-user.form" aria-hidden="true"></i>
+                            </h4>
+                        </div>                            
+                        <div id="user" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <!-- Text input-->
+                                <fieldset>
+                                    <form class="api-form form-horizontal" action="/user.form" method="POST" name="form-user" role="form" data-childs="[&quot;people&quot;,&quot;log&quot;]">
+                                        <!-- Form Name -->
+                                        <legend><?= $this->translate('Users') ?></legend>                                        
+                                        <?php foreach ($this->user_people AS $user) { ?>
+                                            <div id="container-delete-<?= $user->getId() ?>" class="form-group">
+                                                <label class="col-md-4 control-label" id="label-username" for="input-username">Username: </label>
+                                                <div class="col-md-4">                        
+                                                    <input readonly class="form-control input-md" value="<?= $user->getUsername() ?>" id="input-username" name="username" type="text" >
+                                                </div>                                        
 
-                <div class="col-md-12">
-                    <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-file">
-                                        </span>E-MAILS</a>
-                                    <i class="fa fa-plus pull-right" data-add="/api/user/<?= $this->response['data']->getPeople()->getId() ?>/email.form" aria-hidden="true"></i>
-                                </h4>
-                            </div>                            
-                            <div id="collapseOne" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    <!-- Text input-->
-                                    <div class="form-group row">
-                                        <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
-                                        <div class="col-md-4">
-                                            <input data-mask="<?= '({
-    mask: \'*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]\',
-    greedy: false,
-    onBeforePaste: function (pastedValue, opts) {
-      pastedValue = pastedValue.toLowerCase();
-      return pastedValue.replace(\'mailto:\', \'\');
-    },
-    definitions: {
-      \'*\': {
-        validator:\'[0-9A-Za-z!#$%&\\\'*+/=?^_`{|}~\-]\',
-        cardinality: 1,
-        casing: \'lower\'
-      }
-    }
-  })'; ?>" value="<?= $this->response['data']->getPeople()->getEmail()[0]->getEmail(); ?>" id="email" name="email" type="text" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
-                                        </div>
-                                    </div>
-                                </div>
+                                                <div class="col-md-4">
+                                                    <button <?= $user->getId() == $this->user->getId() ? 'disabled' : '' ?> data-delete-name="<?= $this->translate('Delete') ?>" data-calcel-name="<?= $this->translate('Cancel') ?>" data-header="<?= $this->translate('Confirm delete this user?') ?>" data-body="<?= $user->getUsername() ?>" data-toggle="modal" data-target="#confirm-delete" data-id="<?= $user->getId() ?>" data-delete-confirm="/user/delete" name="confirm-delete-<?= $user->getId() ?>" id="confirm-delete-<?= $user->getId() ?>" type="button" class="confirm-delete btn btn-danger">
+                                                        <?= $this->translate('Delete') ?>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                    </form>
+                                </fieldset>
                             </div>
                         </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span class="glyphicon glyphicon-th-list">
-                                        </span>TELEFONES</a>
-                                </h4>
-                            </div>
-                            <div id="collapseTwo" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <!-- Text input-->
-                                    <div class="form-group">
-                                        <label class="col-md-4 control-label" for="phone"><?= $this->translate('Phone') ?></label>  
-                                        <div class="col-md-4">
-                                            <input data-mask="({mask: ['(99) 9999-9999', '(99) 99999-9999' ],keepStatic: true})" id="phone" name="phone" type="text" placeholder="<?= $this->translate('Enter your phone') ?>" class="form-control input-md" required>
-                                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#user-mail"><span class="glyphicon glyphicon-envelope">
+                                    </span><?= $this->translate('E-Mails') ?></a>
+                                <i class="fa fa-plus pull-right" data-add-form="/api/user/email.form" aria-hidden="true"></i>
+                            </h4>
+                        </div>                            
+                        <div id="user-mail" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <!-- Text input-->
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="email"><?= $this->translate('Email') ?></label>  
+                                    <div class="col-md-4">
+                                        <input data-mask="<?= '({
+                                                    mask: \'*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]\',
+                                                    greedy: false,
+                                                    onBeforePaste: function (pastedValue, opts) {
+                                                      pastedValue = pastedValue.toLowerCase();
+                                                      return pastedValue.replace(\'mailto:\', \'\');
+                                                    },
+                                                    definitions: {
+                                                      \'*\': {
+                                                        validator:\'[0-9A-Za-z!#$%&\\\'*+/=?^_`{|}~\-]\',
+                                                        cardinality: 1,
+                                                        casing: \'lower\'
+                                                      }
+                                                    }
+                                                  })'; ?>" value="" id="email" name="email" type="text" placeholder="<?= $this->translate('Enter your email') ?>" class="form-control input-md" required>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane" id="dados-empresa">
-
-        </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#user-phone"><span class="glyphicon glyphicon-earphone">
+                                    </span><?= $this->translate('Phones') ?></a>
+                            </h4>
+                        </div>
+                        <div id="user-phone" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <!-- Text input-->
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="phone"><?= $this->translate('Phone') ?></label>  
+                                    <div class="col-md-4">
+                                        <input data-mask="({mask: ['(99) 9999-9999', '(99) 99999-9999' ],keepStatic: true})" id="phone" name="phone" type="text" placeholder="<?= $this->translate('Enter your phone') ?>" class="form-control input-md" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        
+            </div>                    
+        </div>         
     </div>
-
 </div>
-
-
 

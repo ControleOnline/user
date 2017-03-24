@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="people", uniqueConstraints={@ORM\UniqueConstraint(name="image_id", columns={"image_id"})})
  * @ORM\Entity
  */
-class People
-{
+class People {
+
     /**
      * @var integer
      *
@@ -76,15 +76,14 @@ class People
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\OneToMany(targetEntity="Entity\PeopleEmployee", mappedBy="employee")
+     * @ORM\OneToMany(targetEntity="Entity\User", mappedBy="user")
      */
-    private $user;
+    private $user;  
 
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->adress = new \Doctrine\Common\Collections\ArrayCollection();
         $this->document = new \Doctrine\Common\Collections\ArrayCollection();
         $this->email = new \Doctrine\Common\Collections\ArrayCollection();
@@ -98,8 +97,7 @@ class People
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -109,8 +107,7 @@ class People
      * @param string $name
      * @return People
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -121,8 +118,7 @@ class People
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -132,8 +128,7 @@ class People
      * @param \Entity\Image $image
      * @return People
      */
-    public function setImage(\Entity\Image $image = null)
-    {
+    public function setImage(\Entity\Image $image = null) {
         $this->image = $image;
 
         return $this;
@@ -144,8 +139,7 @@ class People
      *
      * @return \Entity\Image 
      */
-    public function getImage()
-    {
+    public function getImage() {
         return $this->image;
     }
 
@@ -155,8 +149,7 @@ class People
      * @param \Entity\Adress $adress
      * @return People
      */
-    public function addAdress(\Entity\Adress $adress)
-    {
+    public function addAdress(\Entity\Adress $adress) {
         $this->adress[] = $adress;
 
         return $this;
@@ -167,8 +160,7 @@ class People
      *
      * @param \Entity\Adress $adress
      */
-    public function removeAdress(\Entity\Adress $adress)
-    {
+    public function removeAdress(\Entity\Adress $adress) {
         $this->adress->removeElement($adress);
     }
 
@@ -177,8 +169,7 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getAdress()
-    {
+    public function getAdress() {
         return $this->adress;
     }
 
@@ -188,8 +179,7 @@ class People
      * @param \Entity\Document $document
      * @return People
      */
-    public function addDocument(\Entity\Document $document)
-    {
+    public function addDocument(\Entity\Document $document) {
         $this->document[] = $document;
 
         return $this;
@@ -200,8 +190,7 @@ class People
      *
      * @param \Entity\Document $document
      */
-    public function removeDocument(\Entity\Document $document)
-    {
+    public function removeDocument(\Entity\Document $document) {
         $this->document->removeElement($document);
     }
 
@@ -210,8 +199,7 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getDocument()
-    {
+    public function getDocument() {
         return $this->document;
     }
 
@@ -221,8 +209,7 @@ class People
      * @param \Entity\Email $email
      * @return People
      */
-    public function addEmail(\Entity\Email $email)
-    {
+    public function addEmail(\Entity\Email $email) {
         $this->email[] = $email;
 
         return $this;
@@ -233,8 +220,7 @@ class People
      *
      * @param \Entity\Email $email
      */
-    public function removeEmail(\Entity\Email $email)
-    {
+    public function removeEmail(\Entity\Email $email) {
         $this->email->removeElement($email);
     }
 
@@ -243,8 +229,7 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -254,8 +239,7 @@ class People
      * @param \Entity\PeopleClient $peopleClient
      * @return People
      */
-    public function addPeopleClient(\Entity\PeopleClient $peopleClient)
-    {
+    public function addPeopleClient(\Entity\PeopleClient $peopleClient) {
         $this->peopleClient[] = $peopleClient;
 
         return $this;
@@ -266,8 +250,7 @@ class People
      *
      * @param \Entity\PeopleClient $peopleClient
      */
-    public function removePeopleClient(\Entity\PeopleClient $peopleClient)
-    {
+    public function removePeopleClient(\Entity\PeopleClient $peopleClient) {
         $this->peopleClient->removeElement($peopleClient);
     }
 
@@ -276,8 +259,7 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getPeopleClient()
-    {
+    public function getPeopleClient() {
         return $this->peopleClient;
     }
 
@@ -287,8 +269,7 @@ class People
      * @param \Entity\PeopleEmployee $peopleEmployee
      * @return People
      */
-    public function addPeopleEmployee(\Entity\PeopleEmployee $peopleEmployee)
-    {
+    public function addPeopleEmployee(\Entity\PeopleEmployee $peopleEmployee) {
         $this->peopleEmployee[] = $peopleEmployee;
 
         return $this;
@@ -299,8 +280,7 @@ class People
      *
      * @param \Entity\PeopleEmployee $peopleEmployee
      */
-    public function removePeopleEmployee(\Entity\PeopleEmployee $peopleEmployee)
-    {
+    public function removePeopleEmployee(\Entity\PeopleEmployee $peopleEmployee) {
         $this->peopleEmployee->removeElement($peopleEmployee);
     }
 
@@ -309,8 +289,7 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getPeopleEmployee()
-    {
+    public function getPeopleEmployee() {
         return $this->peopleEmployee;
     }
 
@@ -320,8 +299,7 @@ class People
      * @param \Entity\User $user
      * @return People
      */
-    public function addUser(\Entity\User $user)
-    {
+    public function addUser(\Entity\User $user) {
         $this->user[] = $user;
 
         return $this;
@@ -332,8 +310,7 @@ class People
      *
      * @param \Entity\User $user
      */
-    public function removeUser(\Entity\User $user)
-    {
+    public function removeUser(\Entity\User $user) {
         $this->user->removeElement($user);
     }
 
@@ -342,8 +319,8 @@ class People
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
+
 }

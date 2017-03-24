@@ -21,12 +21,14 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel->initialize($this->serviceLocator);
         $username = $this->params()->fromPost('username');
         $password = $this->params()->fromPost('password');
+        $login_referrer = $this->params()->fromQuery('login-referrer');
 
         if ((!$username || !$password) && $this->_userModel->loggedIn()) {
-            return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
+            return $this->redirect()->toUrl($login_referrer ?: $this->_renderer->basePath('/user/profile'));
         } else {
             $this->_userModel->login($username, $password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
+            $this->_view->setVariable('login_referrer', $login_referrer);
             $this->_view->setTemplate('user/default/login.phtml');
         }
 
@@ -46,8 +48,14 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($this->_userModel->loggedIn()) {
             return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
         } else {
-            return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
+            return $this->redirectToLogin();
         }
+    }
+
+    public function redirectToLogin() {
+        $url = $this->getRequest()->getUri()->getPath();
+        $params = $this->getRequest()->getUri()->getQueryAsArray() ?: array();
+        return $this->redirect()->toUrl($this->_renderer->basePath('/user/login?login-referrer=' . $url . rawurlencode('&' . http_build_query($params))));
     }
 
     public function userInUseAction() {
@@ -96,9 +104,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $response;
     }
 
-    public function profileAction() {
-        $this->_userModel = new UserModel();
-        $this->_userModel->initialize($this->serviceLocator);
+    public function changePasswordAction() {
         $name = $this->params()->fromPost('name');
         $username = $this->params()->fromPost('username');
         $password = $this->params()->fromPost('password');
@@ -107,11 +113,30 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($username && $this->_userModel->loggedIn()) {
             $this->_userModel->changeUser($username, $name, $password, $confirm_password);
         }
+    }
+
+    public function deleteAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        if (!$this->_userModel->loggedIn()) {
+            ErrorModel::addError('You do not have permission to delete this user!');
+        } else {
+            $delete = $this->_userModel->delete($this->params()->fromPost('id'));
+            return $delete ? Format::returnData($delete) : ErrorModel::addError('Error removing this user!');
+        }
+    }
+
+    public function profileAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
+            $this->_view->setVariables(array(
+                'user' => $this->_userModel->getLoggedUser(),
+                'user_people' => $this->_userModel->getLoggedUserPeople())
+            );
             $this->_view->setTemplate('user/default/profile.phtml');
         } else {
-            return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
+            return $this->redirectToLogin();
         }
         return $this->_view;
     }
@@ -121,6 +146,25 @@ class DefaultController extends \Core\Controller\DefaultController {
     }
 
     public function forgotUsername() {
+        return $this->_view;
+    }
+
+    public function addUserAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+
+        $username = $this->params()->fromPost('username');
+        $password = $this->params()->fromPost('password');
+        $confirm_password = $this->params()->fromPost('confirm-password');
+
+        if ($this->_userModel->loggedIn()) {
+            $new_user = $this->_userModel->addUser($username, $password, $confirm_password);
+        }
+
+        $this->_view->setVariables(Format::returnData($new_user));
+        $this->_view->setTemplate('user/form/add-user.phtml');
+
+        $this->_view->setTerminal(true);
         return $this->_view;
     }
 
