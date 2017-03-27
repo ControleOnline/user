@@ -40,6 +40,26 @@ class UserModel extends DefaultModel implements LoginInterface {
         return $this->getErrors() ? false : true;
     }
 
+    public function addUserEmail($email) {
+        $current_user = $this->getLoggedUser();
+        $this->emailExists($email);
+        if (!$this->getErrors()) {
+            $entity_email = new \Entity\Email();
+            $entity_email->setPeople($current_user->getPeople());
+            $entity_email->setEmail($email);
+            $entity_email->setConfirmed(false);
+            $this->_em->persist($entity_email);
+
+            $this->_em->flush();
+            $this->_em->clear();
+            return array(
+                'id' => $entity_email->getId(),
+                'email' => $entity_email->getEmail(),
+                'confirmed' => $entity_email->getConfirmed()
+            );
+        }
+    }
+
     public function addUser($username, $password, $confirm_password) {
         $current_user = $this->getLoggedUser();
 
@@ -76,6 +96,13 @@ class UserModel extends DefaultModel implements LoginInterface {
         $entity_user->setUsername($username);
         $entity_user->setHash($this->getHash($password));
         $this->_em->persist($entity_user);
+
+
+        $entity_employee = new \Entity\PeopleEmployee();
+        $entity_employee->setEmployee($entity_people);
+        $entity_employee->setCompany($this->getPeopleCompany());
+
+        $this->_em->persist($entity_employee);
 
         return $entity_user;
     }
@@ -125,6 +152,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function login($username, $password) {
+        $this->logout();
         $storePassword = $this->getStorePassword($username);
         if ($storePassword && hash_equals($storePassword, crypt($password, $storePassword))) {
             $user = $this->entity->findOneBy(array('username' => $username));
@@ -196,8 +224,33 @@ class UserModel extends DefaultModel implements LoginInterface {
         return self::$_company;
     }
 
+    public function deleteEmail($id) {
+        if (!$this->loggedIn()) {
+            ErrorModel::addError('You do not have permission to delete this!');
+        } elseif (!$id) {
+            ErrorModel::addError('Email id not informed!');
+        } elseif (count($this->getLoggedUser()->getPeople()->getEmail()) < 2) {
+            ErrorModel::addError('You need at least one registered e-mail. Please add another email before removing this one.');
+        } else {
+            $entity = $this->_em->getRepository('\Entity\Email')->findOneBy(array(
+                'id' => $id,
+                'people' => $this->getLoggedUser()->getPeople()
+            ));
+            if ($entity) {
+                $this->_em->remove($entity);
+                $this->_em->flush();
+                $this->_em->clear();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public function delete($id) {
-        if (!$id) {
+        if (!$this->loggedIn()) {
+            ErrorModel::addError('You do not have permission to delete this!');
+        } elseif (!$id) {
             ErrorModel::addError('User id not informed!');
         } elseif ($id != $this->getLoggedUser()->getId()) {
             $entity = $this->entity->findOneBy(array(
@@ -219,8 +272,12 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function getLoggedUserPeople() {
-        self::$_user_people = self::$_user_people ? self::$_user_people : $this->entity->findBy(array('people' => $this->getLoggedUser()->getPeople()));
+        self::$_user_people = self::$_user_people ? self::$_user_people : $this->getLoggedUser() ? $this->entity->findBy(array('people' => $this->getLoggedUser()->getPeople())) : false;
         return self::$_user_people;
+    }
+
+    public function getPeopleCompany() {
+        return $this->getLoggedUserPeople() ?: $this->_em->getRepository('\Entity\People')->find(1);
     }
 
     public function getLoggedUser() {

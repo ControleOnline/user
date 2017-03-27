@@ -118,12 +118,15 @@ class DefaultController extends \Core\Controller\DefaultController {
     public function deleteAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
-        if (!$this->_userModel->loggedIn()) {
-            ErrorModel::addError('You do not have permission to delete this user!');
-        } else {
-            $delete = $this->_userModel->delete($this->params()->fromPost('id'));
-            return $delete ? Format::returnData($delete) : ErrorModel::addError('Error removing this user!');
-        }
+        $delete = $this->_userModel->delete($this->params()->fromPost('id'));
+        return $delete ? $this->_view : ErrorModel::addError('Error removing this user!');
+    }
+
+    public function deleteEmailAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $delete = $this->_userModel->deleteEmail($this->params()->fromPost('id'));
+        return $delete ? $this->_view : ErrorModel::addError('Error removing this email!');
     }
 
     public function profileAction() {
@@ -149,6 +152,20 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $this->_view;
     }
 
+    public function addEmailAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $email = $this->params()->fromPost('email');
+
+        if ($this->_userModel->loggedIn() && $email) {
+            $new_email = $this->_userModel->addUserEmail($email);
+            $this->_view->setVariables(Format::returnData($new_email));
+        }
+        $this->_view->setTemplate('user/form/add-user-email.phtml');
+        $this->_view->setTerminal(true);
+        return $this->_view;
+    }
+
     public function addUserAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
@@ -157,13 +174,11 @@ class DefaultController extends \Core\Controller\DefaultController {
         $password = $this->params()->fromPost('password');
         $confirm_password = $this->params()->fromPost('confirm-password');
 
-        if ($this->_userModel->loggedIn()) {
+        if ($this->_userModel->loggedIn() && $username && $password && $confirm_password) {
             $new_user = $this->_userModel->addUser($username, $password, $confirm_password);
+            $this->_view->setVariables(Format::returnData($new_user));
         }
-
-        $this->_view->setVariables(Format::returnData($new_user));
         $this->_view->setTemplate('user/form/add-user.phtml');
-
         $this->_view->setTerminal(true);
         return $this->_view;
     }
