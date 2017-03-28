@@ -3,7 +3,7 @@
     <fieldset>
         <form class="api-form form-horizontal" action="/user-email.form" method="POST" name="form-user-email" id="form-user-email" role="form" data-childs="[&quot;people&quot;,&quot;log&quot;]">
             <!-- Form Name -->
-            <i title="<?=$this->translate('Add new e-mail for this user')?>" class="fa fa-plus pull-right" data-add-form="/user/add-email.form" aria-hidden="true"></i>
+            <i title="<?= $this->translate('Add new e-mail for this user') ?>" class="fa fa-plus pull-right" data-add-form="/user/add-email.form" aria-hidden="true"></i>
             <legend><?= $this->translate('Emails') ?></legend>            
             <div id="container-delete-email-{id}" class="form-group hidden clone" data-clone="add-user-email">
                 <label class="col-md-4 control-label" id="label-mail-{id}" for="input-mail"><?= $this->translate('Email') ?>: </label>
@@ -16,7 +16,8 @@
                     </button>
                 </div>
             </div>                                        
-            <?php foreach ($this->user->getPeople()->getEmail() AS $user_email) { ?>
+            <?php                                     
+            foreach ($this->user->getPeople()->getEmail() AS $user_email) { ?>
                 <div id="container-delete-email-<?= $user_email->getId() ?>" class="form-group">
                     <label class="col-md-4 control-label" id="label-mail-<?= $user_email->getId() ?>" for="input-mail"><?= $this->translate('Email') ?>: </label>
                     <div class="col-md-4">                        

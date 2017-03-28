@@ -18,10 +18,7 @@ class Module {
     public function onBootstrap(MvcEvent $e) {
         $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-        $viewModel = $e->getApplication()->getMvcEvent()->getViewModel();
-        $viewModel->userModel = new \User\Model\UserModel();
-        $viewModel->userModel->initialize($e->getApplication()->getServiceManager());
+        $moduleRouteListener->attach($eventManager);          
     }
 
     public function getConfig() {

@@ -1,4 +1,4 @@
-define('user-default-login', ['jquery', 'core', 'jquery-form-validator'], function ($, core) {
+define('user-default-login', ['jquery', 'core', 'jquery-form-validator','bootstrap'], function ($, core) {
     var user = {};
     user.init = function () {
         $('.profile-image').on('load', function () {

@@ -1,4 +1,4 @@
-define('user-default-create-account', ['jquery', 'jquery-form-validator'], function () {
+define('user-default-create-account', ['jquery', 'jquery-form-validator', 'bootstrap'], function () {
     var user = {};
     user.init = function () {
         $('#create-account-form').submit(function (e) {

@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use User\Model\UserModel;
 use Core\Helper\Format;
 use Core\Model\ErrorModel;
-use Core\Helper\ViewRender;
 
 class DefaultController extends \Core\Controller\DefaultController {
 
@@ -30,7 +29,6 @@ class DefaultController extends \Core\Controller\DefaultController {
             $this->_userModel->login($username, $password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
             $this->_view->setVariable('login_referrer', $login_referrer);
-            $this->_view->setTemplate('user/default/login.phtml');
         }
 
         return $this->_view;
@@ -141,9 +139,11 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
+            /*
+             * @todo Verificar porque essas variáveis estão substituindo o método setDefaultVariables no module.php do core. Sem setar essas variáveis auqi simplesmente não funciona.
+             */
             $this->_view->user = $this->_userModel->getLoggedUser();
-            $this->_view->user_people = $this->_userModel->getLoggedUserPeople();
-            $this->_view->setTemplate('user/default/profile.phtml');
+            $this->_view->userPeople = $this->_userModel->getLoggedUserPeople();
         } else {
             return $this->redirectToLogin();
         }
@@ -171,7 +171,7 @@ class DefaultController extends \Core\Controller\DefaultController {
             ErrorModel::addError('The ddd field is required.');
             ErrorModel::addError('The phone field is required.');
         }
-        $this->_view->setTemplate('user/form/add-user-phone.phtml');
+
         $this->_view->setTerminal(true);
         return $this->_view;
     }
@@ -187,7 +187,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         } else {
             ErrorModel::addError('The email field is required.');
         }
-        $this->_view->setTemplate('user/form/add-user-email.phtml');
+
         $this->_view->setTerminal(true);
         return $this->_view;
     }
@@ -204,7 +204,7 @@ class DefaultController extends \Core\Controller\DefaultController {
             $new_user = $this->_userModel->addUser($username, $password, $confirm_password);
             $this->_view->setVariables(Format::returnData($new_user));
         }
-        $this->_view->setTemplate('user/form/add-user.phtml');
+
         $this->_view->setTerminal(true);
         return $this->_view;
     }
@@ -220,11 +220,8 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($username && !$this->_userModel->loggedIn()) {
             $this->_userModel->createAccount($username, $email, $name, $password, $confirm_password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setTemplate('user/default/create-account.phtml');
         } elseif ($this->_userModel->loggedIn()) {
             return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
-        } else {
-            $this->_view->setTemplate('user/default/create-account.phtml');
         }
         return $this->_view;
     }

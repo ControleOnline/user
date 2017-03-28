@@ -8,7 +8,9 @@
                         <div class="profile-image-container">
                             <img class="profile-image" data-default-image-profile="/user/profile-image/id/0/profile.png" src="/user/profile-image/id/0/profile.png">
                         </div>
-                        <div class="app-brand"><?= $this->translate('Panel') ?> <span class="highlight"><?= $this->translate('Application Name') ?></span></div>                        
+                        <div class="app-brand">
+                            <img class="lazy-loaded" width="210px" alt="<?= $this->translate('Application Name') ?>" src="<?=$this->basePath('logo.svg')?>">
+                        </div>
                     </div> 
                     <div class="row username-container">
                         <h4>&nbsp;

@@ -322,7 +322,11 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function getPeopleCompany() {
-        return $this->getLoggedUserPeople() ?: $this->_em->getRepository('\Entity\People')->find(1);
+        return $this->getLoggedUserPeople() ?: $this->getDefaultCompany();
+    }
+
+    public function getDefaultCompany() {
+        return $this->_em->getRepository('\Entity\People')->find(1);
     }
 
     public function getLoggedUser() {
