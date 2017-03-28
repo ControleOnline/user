@@ -40,6 +40,27 @@ class UserModel extends DefaultModel implements LoginInterface {
         return $this->getErrors() ? false : true;
     }
 
+    public function addUserPhone($ddd, $phone) {
+        $current_user = $this->getLoggedUser();
+        if (!$this->getErrors()) {
+            $entity_phone = new \Entity\Phone();
+            $entity_phone->setPeople($current_user->getPeople());
+            $entity_phone->setDdd($ddd);
+            $entity_phone->setPhone($phone);
+            $entity_phone->setConfirmed(false);
+            $this->_em->persist($entity_phone);
+
+            $this->_em->flush();
+            $this->_em->clear();
+            return array(
+                'id' => $entity_phone->getId(),
+                'ddd' => $entity_phone->getDdd(),
+                'phone' => $entity_phone->getPhone(),
+                'confirmed' => $entity_phone->getConfirmed()
+            );
+        }
+    }
+
     public function addUserEmail($email) {
         $current_user = $this->getLoggedUser();
         $this->emailExists($email);
@@ -83,6 +104,7 @@ class UserModel extends DefaultModel implements LoginInterface {
 
         $entity_people = new \Entity\People();
         $entity_people->setName($name);
+        $entity_people->setPeopleType('F');
         $this->_em->persist($entity_people);
 
         $entity_email = new \Entity\Email();
@@ -222,6 +244,29 @@ class UserModel extends DefaultModel implements LoginInterface {
     public function getUserCompany() {
         self::$_company = self::$_company ?: $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany();
         return self::$_company;
+    }
+
+    public function deletePhone($id) {
+        if (!$this->loggedIn()) {
+            ErrorModel::addError('You do not have permission to delete this!');
+        } elseif (!$id) {
+            ErrorModel::addError('Phone id not informed!');
+        } elseif (count($this->getLoggedUser()->getPeople()->getPhone()) < 2) {
+            ErrorModel::addError('You need at least one phone. Please add another phone before removing this one.');
+        } else {
+            $entity = $this->_em->getRepository('\Entity\Phone')->findOneBy(array(
+                'id' => $id,
+                'people' => $this->getLoggedUser()->getPeople()
+            ));
+            if ($entity) {
+                $this->_em->remove($entity);
+                $this->_em->flush();
+                $this->_em->clear();
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public function deleteEmail($id) {

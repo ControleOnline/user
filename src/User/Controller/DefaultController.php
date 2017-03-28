@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use User\Model\UserModel;
 use Core\Helper\Format;
 use Core\Model\ErrorModel;
+use Core\Helper\ViewRender;
 
 class DefaultController extends \Core\Controller\DefaultController {
 
@@ -122,6 +123,13 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $delete ? $this->_view : ErrorModel::addError('Error removing this user!');
     }
 
+    public function deletePhoneAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $delete = $this->_userModel->deletePhone($this->params()->fromPost('id'));
+        return $delete ? $this->_view : ErrorModel::addError('Error removing this phone!');
+    }
+
     public function deleteEmailAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
@@ -133,10 +141,8 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if ($this->_userModel->loggedIn()) {
-            $this->_view->setVariables(array(
-                'user' => $this->_userModel->getLoggedUser(),
-                'user_people' => $this->_userModel->getLoggedUserPeople())
-            );
+            $this->_view->user = $this->_userModel->getLoggedUser();
+            $this->_view->user_people = $this->_userModel->getLoggedUserPeople();
             $this->_view->setTemplate('user/default/profile.phtml');
         } else {
             return $this->redirectToLogin();
@@ -152,6 +158,24 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $this->_view;
     }
 
+    public function addPhoneAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $phone = $this->params()->fromPost('phone');
+        $ddd = $this->params()->fromPost('ddd');
+
+        if ($this->_userModel->loggedIn() && $ddd && $phone) {
+            $new_phone = $this->_userModel->addUserPhone($ddd, $phone);
+            $this->_view->setVariables(Format::returnData($new_phone));
+        } else {
+            ErrorModel::addError('The ddd field is required.');
+            ErrorModel::addError('The phone field is required.');
+        }
+        $this->_view->setTemplate('user/form/add-user-phone.phtml');
+        $this->_view->setTerminal(true);
+        return $this->_view;
+    }
+
     public function addEmailAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
@@ -160,6 +184,8 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($this->_userModel->loggedIn() && $email) {
             $new_email = $this->_userModel->addUserEmail($email);
             $this->_view->setVariables(Format::returnData($new_email));
+        } else {
+            ErrorModel::addError('The email field is required.');
         }
         $this->_view->setTemplate('user/form/add-user-email.phtml');
         $this->_view->setTerminal(true);

@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="document", uniqueConstraints={@ORM\UniqueConstraint(name="doc", columns={"document", "document_type_id"}), @ORM\UniqueConstraint(name="type", columns={"people_id", "document_type_id"})}, indexes={@ORM\Index(name="type_2", columns={"document_type_id"}), @ORM\Index(name="IDX_D8698A763147C936", columns={"people_id"})})
  * @ORM\Entity
  */
-class Document
-{
+class Document {
+
     /**
      * @var integer
      *
@@ -39,6 +39,23 @@ class Document
     private $people;
 
     /**
+     * @var \Entity\Image
+     *
+     * @ORM\ManyToOne(targetEntity="Entity\Image")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="image_id", referencedColumnName="id")
+     * })
+     */
+    private $image;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="people_type", type="string", length=1, nullable=false)
+     */
+    private $peopleType;
+
+    /**
      * @var \Entity\DocumentType
      *
      * @ORM\ManyToOne(targetEntity="Entity\DocumentType")
@@ -48,15 +65,34 @@ class Document
      */
     private $documentType;
 
-
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Set people_type
+     *
+     * @param string $people_type
+     * @return People
+     */
+    public function setPeopleType($people_type) {
+        $this->peopleType = $people_type;
+
+        return $this;
+    }
+
+    /**
+     * Get people_type
+     *
+     * @return string 
+     */
+    public function getPeopleType() {
+        return $this->peopleType;
     }
 
     /**
@@ -65,8 +101,7 @@ class Document
      * @param integer $document
      * @return Document
      */
-    public function setDocument($document)
-    {
+    public function setDocument($document) {
         $this->document = $document;
 
         return $this;
@@ -77,9 +112,29 @@ class Document
      *
      * @return integer 
      */
-    public function getDocument()
-    {
+    public function getDocument() {
         return $this->document;
+    }
+
+    /**
+     * Set image
+     *
+     * @param \Entity\Image $image
+     * @return People
+     */
+    public function setImage(\Entity\Image $image = null) {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \Entity\Image 
+     */
+    public function getImage() {
+        return $this->image;
     }
 
     /**
@@ -88,8 +143,7 @@ class Document
      * @param \Entity\People $people
      * @return Document
      */
-    public function setPeople(\Entity\People $people = null)
-    {
+    public function setPeople(\Entity\People $people = null) {
         $this->people = $people;
 
         return $this;
@@ -100,8 +154,7 @@ class Document
      *
      * @return \Entity\People 
      */
-    public function getPeople()
-    {
+    public function getPeople() {
         return $this->people;
     }
 
@@ -111,8 +164,7 @@ class Document
      * @param \Entity\DocumentType $documentType
      * @return Document
      */
-    public function setDocumentType(\Entity\DocumentType $documentType = null)
-    {
+    public function setDocumentType(\Entity\DocumentType $documentType = null) {
         $this->documentType = $documentType;
 
         return $this;
@@ -123,8 +175,8 @@ class Document
      *
      * @return \Entity\DocumentType 
      */
-    public function getDocumentType()
-    {
+    public function getDocumentType() {
         return $this->documentType;
     }
+
 }

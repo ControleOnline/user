@@ -29,6 +29,13 @@ class People {
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="people_type", type="string", length=1, nullable=false)
+     */
+    private $peopleType;
+
+    /**
      * @var \Entity\Image
      *
      * @ORM\ManyToOne(targetEntity="Entity\Image")
@@ -51,6 +58,13 @@ class People {
      * @ORM\OneToMany(targetEntity="Entity\Document", mappedBy="people")
      */
     private $document;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="Entity\Phone", mappedBy="people")
+     */
+    private $phone;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -78,7 +92,7 @@ class People {
      *
      * @ORM\OneToMany(targetEntity="Entity\User", mappedBy="user")
      */
-    private $user;  
+    private $user;
 
     /**
      * Constructor
@@ -90,6 +104,7 @@ class People {
         $this->peopleClient = new \Doctrine\Common\Collections\ArrayCollection();
         $this->peopleEmployee = new \Doctrine\Common\Collections\ArrayCollection();
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->phone = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -99,6 +114,27 @@ class People {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Set people_type
+     *
+     * @param string $people_type
+     * @return People
+     */
+    public function setPeopleType($people_type) {
+        $this->peopleType = $people_type;
+
+        return $this;
+    }
+
+    /**
+     * Get people_type
+     *
+     * @return string 
+     */
+    public function getPeopleType() {
+        return $this->peopleType;
     }
 
     /**
@@ -171,6 +207,36 @@ class People {
      */
     public function getAdress() {
         return $this->adress;
+    }
+
+    /**
+     * Add document
+     *
+     * @param \Entity\Phone $phone
+     * @return People
+     */
+    public function addPhone(\Entity\Phone $phone) {
+        $this->phone[] = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Remove phone
+     *
+     * @param \Entity\Phone $phone
+     */
+    public function removePhone(\Entity\Phone $phone) {
+        $this->phone->removeElement($phone);
+    }
+
+    /**
+     * Get document
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhone() {
+        return $this->phone;
     }
 
     /**
