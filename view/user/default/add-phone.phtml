@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">                
                 <fieldset>
-                    <form class="api-form form-horizontal" action="/user/add-phone" method="POST" name="form-add-phone" role="form" >
+                    <form class="api-form form-horizontal" data-clone-field="[data-clone=add-user-phone]" data-clone-target="#form-user-phone" action="/user/add-phone.json" method="POST" name="form-add-phone" role="form" >
                         <!-- Form Name -->                        
                         <input name="method" value="POST" type="hidden">         
                         <div class="form-group">
@@ -30,7 +30,7 @@
                         <div class="form-group">
                             <div class="col-md-2"></div>                
                             <div class="col-md-8">
-                                <button data-clone-field="[data-clone=add-user-phone]" data-clone-target="#form-user-phone" data-add="/user/add-phone.json" name="add-phone" type="button" class="btn btn-success pull-right">                                        
+                                <button data-clone-field="[data-clone=add-user-phone]" data-clone-target="#form-user-phone" data-add="/user/add-phone.json" name="add-phone" type="submit" class="btn btn-success pull-right">                                        
                                     <?= ucfirst($this->translate('Add phone')) ?>
                                 </button>                                                                                        
                             </div>

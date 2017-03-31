@@ -6,10 +6,10 @@
                 <div class="app-form">
                     <div class="form-header">                        
                         <div class="profile-image-container">
-                            <img class="profile-image" data-default-image-profile="/user/profile-image/id/0/profile.png" src="/user/profile-image/id/0/profile.png">
+                            <img class="profile-image lazy-loaded" data-default-image-profile="<?= $this->default_user_image_profile ?>" src="/user/profile-image/id/0/profile.png">
                         </div>
                         <div class="app-brand">
-                            <img class="lazy-loaded" width="210px" alt="<?= $this->translate('Application Name') ?>" src="<?=$this->basePath('logo.svg')?>">
+                            <img class="lazy-loaded" width="210px" height="66px" alt="<?= $this->translate('Application Name') ?>" src="<?= $this->defaultCompany->getImage()->getUrl() ?>">
                         </div>
                     </div> 
                     <div class="row username-container">
@@ -17,7 +17,7 @@
                             <span class="user-name" style="display: none"></span>
                             &nbsp;</h4>
                     </div>
-                    <form data-success-url="<?= $this->login_referrer ?: '/' ?>" id="login-form" class="form-horizontal" action="/user/login" method="POST">
+                    <form data-success-url="<?= $this->login_referrer ?: '/' ?>" id="login-form" class="form-horizontal" action="/user/login.json" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-user" aria-hidden="true"></i></span>              
@@ -28,8 +28,8 @@
                                 <i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="password" name="password" type="password" data-validation="required" placeholder="<?= $this->translate('Enter a password') ?>" class="form-control input-md" required>
                         </div>
-                        <div class="text-center">
-                            <button id="login" name="login" class="btn btn-success btn-submit"><?= $this->translate('Login') ?></button>                            
+                        <div class="text-center">                            
+                            <button data-save="/user/login.json" data-success-url="<?= $this->login_referrer ?: '/' ?>" id="login" name="login" class="btn btn-success btn-submit"><?= $this->translate('Login') ?></button>                            
                         </div>
                     </form>
                     <!--

@@ -2,17 +2,12 @@
 
 namespace User\Controller;
 
-use Doctrine\ORM\EntityManager;
 use User\Model\UserModel;
 use Core\Helper\Format;
 use Core\Model\ErrorModel;
 
 class DefaultController extends \Core\Controller\DefaultController {
 
-    /**
-     * @var EntityManager
-     */
-    protected $_em;
     protected $_userModel;
     protected $_peopleModel;
 
@@ -88,7 +83,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($userId) {
             $this->_peopleModel = new UserModel();
             $this->_peopleModel->initialize($this->serviceLocator);
-            $this->_peopleModel->setEntity('Entity\\People');
+            $this->_peopleModel->setEntity('Core\\Entity\\People');
             $people = $this->_peopleModel->getEntity()->find($userId);
         }
         $file = $people && $people->getImage() && is_file($people->getImage()->getPath()) ? $people->getImage()->getPath() : $defaultImgProfile;
@@ -98,8 +93,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         $response
                 ->getHeaders()
                 ->addHeaderLine('Content-Transfer-Encoding', 'binary')
-                ->addHeaderLine('Content-Type', exif_imagetype($file));
-
+                ->addHeaderLine('Content-Type', exif_imagetype($file) ?: 'image/svg+xml');
         return $response;
     }
 
@@ -138,13 +132,7 @@ class DefaultController extends \Core\Controller\DefaultController {
     public function profileAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
-        if ($this->_userModel->loggedIn()) {
-            /*
-             * @todo Verificar porque essas variáveis estão substituindo o método setDefaultVariables no module.php do core. Sem setar essas variáveis auqi simplesmente não funciona.
-             */
-            $this->_view->user = $this->_userModel->getLoggedUser();
-            $this->_view->userPeople = $this->_userModel->getLoggedUserPeople();
-        } else {
+        if (!$this->_userModel->loggedIn()) {
             return $this->redirectToLogin();
         }
         return $this->_view;

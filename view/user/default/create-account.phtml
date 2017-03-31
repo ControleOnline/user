@@ -15,7 +15,7 @@
             </div>
             <div class="app-block">
                 <div class="app-right-section">                    
-                    <div class="app-brand"><?= $this->translate('Panel') ?> <span class="highlight"><?= $this->translate('Application Name') ?></span></div>                                        
+                    <div class="app-brand"><img class="lazy-loaded" width="210px" height="66px" alt="<?= $this->translate('Application Name') ?>" src="<?= $this->defaultCompany->getImage()->getUrl() ?>"></div>                                        
                     <div class="app-info">
 
                         <ul class="list">
@@ -44,7 +44,7 @@
                     <div class="form-suggestion">
                         <?= $this->translate('Create Account'); ?>
                     </div>
-                    <form id="create-account-form" class="form-horizontal" data-success-url="/user/profile" action="/user/create-account" method="POST">
+                    <form id="create-account-form" class="form-horizontal" data-success-url="/user/profile" action="/user/create-account.json" method="POST">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-paper-plane" aria-hidden="true"></i></span>
@@ -70,8 +70,8 @@
                                 <i class="fa fa-check" aria-hidden="true"></i></span>
                             <input id="password" name="confirm-password" type="password" data-validation="confirmation" data-validation-confirm="password"  placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
                         </div>
-                        <div class="text-center">                            
-                            <button id="signup" name="signup" class="btn btn-success btn-submit"><?= $this->translate('Register') ?></button>
+                        <div class="text-center">                                                            
+                            <button data-save="/user/create-account.json" data-success-url="<?= $this->login_referrer ?: '/user/profile' ?>" id="signup" name="signup" class="btn btn-success btn-submit"><?= $this->translate('Register') ?></button>
                         </div>
                     </form>
                     <!--
