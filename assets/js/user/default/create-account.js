@@ -1,24 +1,6 @@
 define('user-default-create-account', ['jquery', 'jquery-form-validator', 'bootstrap'], function () {
     var user = {};
     user.init = function () {
-        $('#create-account-form').submit(function (e) {
-            e.preventDefault();
-            if ($(this).isValid()) {
-                $.ajax({
-                    url: $(this).attr('action') + '.json',
-                    data: $(this).serialize(),
-                    method: 'POST',
-                    dataType: 'json',
-                    global: false,
-                    success: function (data) {
-                        $('#wait-modal').modal('hide');
-                        if (data.response && data.response.success) {
-                            window.location.href = $('#create-account-form').data('success-url') ? $('#create-account-form').data('success-url') : '/';
-                        }
-                    }
-                });
-            }
-        });
         $('#username').blur(function () {
             var userField = $(this);
             if (userField.val()) {

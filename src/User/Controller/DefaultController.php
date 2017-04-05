@@ -8,7 +8,14 @@ use Core\Model\ErrorModel;
 
 class DefaultController extends \Core\Controller\DefaultController {
 
+    /**
+     * @var \User\Model\UserModel
+     */
     protected $_userModel;
+
+    /**
+     * @var \User\Model\PeopleModel
+     */
     protected $_peopleModel;
 
     public function loginAction() {
@@ -115,6 +122,20 @@ class DefaultController extends \Core\Controller\DefaultController {
         return $delete ? $this->_view : ErrorModel::addError('Error removing this user!');
     }
 
+    public function deleteAdressAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $delete = $this->_userModel->deleteAdress($this->params()->fromPost('id'));
+        return $delete ? $this->_view : ErrorModel::addError('Error removing this adress!');
+    }
+
+    public function deleteDocumentAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $delete = $this->_userModel->deleteDocument($this->params()->fromPost('id'));
+        return $delete ? $this->_view : ErrorModel::addError('Error removing this document!');
+    }
+
     public function deletePhoneAction() {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
@@ -152,12 +173,56 @@ class DefaultController extends \Core\Controller\DefaultController {
         $phone = $this->params()->fromPost('phone');
         $ddd = $this->params()->fromPost('ddd');
 
-        if ($this->_userModel->loggedIn() && $ddd && $phone) {
+        if ($this->params()->fromPost() && $this->_userModel->loggedIn() && $ddd && $phone) {
             $new_phone = $this->_userModel->addUserPhone($ddd, $phone);
             $this->_view->setVariables(Format::returnData($new_phone));
-        } else {
+        } elseif ($this->params()->fromPost()) {
             ErrorModel::addError('The ddd field is required.');
             ErrorModel::addError('The phone field is required.');
+        }
+
+        $this->_view->setTerminal(true);
+        return $this->_view;
+    }
+
+    public function addAdressAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $params = $this->params()->fromPost();
+        if ($params && $this->_userModel->loggedIn()) {
+            $new_adress = $this->_userModel->addUserAdress($params);
+            $this->_view->setVariables(Format::returnData(array(
+                        'id' => $new_adress->getId(),
+                        'street' => $new_adress->getStreet()->getStreet(),
+                        'number' => $new_adress->getNumber(),
+                        'complement' => $new_adress->getComplement(),
+                        'nickname' => $new_adress->getNickname(),
+                        'neighborhood' => $new_adress->getStreet()->getNeighborhood()->getNeighborhood(),
+                        'cep' => $new_adress->getStreet()->getCep()->getCep(),
+                        'city' => $new_adress->getStreet()->getNeighborhood()->getCity()->getCity(),
+                        'state' => $new_adress->getStreet()->getNeighborhood()->getCity()->getState()->getState(),
+                        'country' => $new_adress->getStreet()->getNeighborhood()->getCity()->getState()->getCountry()->getCountryname()
+            )));
+        }
+
+        $this->_view->setTerminal(true);
+        return $this->_view;
+    }
+
+    public function addDocumentAction() {
+        $this->_userModel = new UserModel();
+        $this->_userModel->initialize($this->serviceLocator);
+        $document = $this->params()->fromPost('document');
+        $document_type = $this->params()->fromPost('document-type');
+
+        if ($this->params()->fromPost() && $this->_userModel->loggedIn() && $document && $document_type) {
+            $new_document = $this->_userModel->addUserDocument($document, $document_type);
+            $this->_view->setVariables(Format::returnData($new_document));
+        } elseif ($this->params()->fromPost()) {
+            ErrorModel::addError('The document field is required.');
+        } else {
+            $document_types = $this->_userModel->getDocumentTypes();
+            $this->_view->setVariables(array('document_types' => $document_types));
         }
 
         $this->_view->setTerminal(true);
@@ -169,10 +234,10 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel->initialize($this->serviceLocator);
         $email = $this->params()->fromPost('email');
 
-        if ($this->_userModel->loggedIn() && $email) {
+        if ($this->params()->fromPost() && $this->_userModel->loggedIn() && $email) {
             $new_email = $this->_userModel->addUserEmail($email);
             $this->_view->setVariables(Format::returnData($new_email));
-        } else {
+        } elseif ($this->params()->fromPost()) {
             ErrorModel::addError('The email field is required.');
         }
 
@@ -188,7 +253,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         $password = $this->params()->fromPost('password');
         $confirm_password = $this->params()->fromPost('confirm-password');
 
-        if ($this->_userModel->loggedIn() && $username && $password && $confirm_password) {
+        if ($this->params()->fromPost() && $this->_userModel->loggedIn() && $username && $password && $confirm_password) {
             $new_user = $this->_userModel->addUser($username, $password, $confirm_password);
             $this->_view->setVariables(Format::returnData($new_user));
         }

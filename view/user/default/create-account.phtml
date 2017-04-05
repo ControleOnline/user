@@ -70,8 +70,8 @@
                                 <i class="fa fa-check" aria-hidden="true"></i></span>
                             <input id="password" name="confirm-password" type="password" data-validation="confirmation" data-validation-confirm="password"  placeholder="<?= $this->translate('Confirm your Password') ?>" class="form-control input-md" required>
                         </div>
-                        <div class="text-center">                                                            
-                            <button data-save="/user/create-account.json" data-success-url="<?= $this->login_referrer ?: '/user/profile' ?>" id="signup" name="signup" class="btn btn-success btn-submit"><?= $this->translate('Register') ?></button>
+                        <div class="text-center">                                    
+                            <button data-success-url="<?= $this->login_referrer ?: '/user/profile' ?>" data-save="/user/create-account.json" id="signup" name="signup" class="btn btn-success btn-submit"><?= $this->translate('Register') ?></button>
                         </div>
                     </form>
                     <!--

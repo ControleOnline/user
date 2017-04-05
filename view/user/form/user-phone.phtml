@@ -5,7 +5,7 @@
             <!-- Form Name -->
             <i title="<?=$this->translate('Add new phone for this user')?>" class="fa fa-plus pull-right" data-add-form="/user/add-phone.form" aria-hidden="true"></i>
             <legend><?= $this->translate('Phones') ?></legend>                                        
-            <div id="container-delete-phone-{id}" class="form-group hidden clone" data-clone="add-user-phone">
+            <div id="container-delete-phone-{id}" class="form-group hidden clone highlight" data-clone="add-user-phone">
                 <label class="col-md-2 control-label" id="label-ddd-{id}" for="input-ddd"><?= $this->translate('DDD') ?>: </label>
                 <div class="col-md-3">                        
                     <input readonly class="form-control input-md" value="" id="input-d-{id}" name="ddd" type="text" >
@@ -21,7 +21,7 @@
                 </div>
             </div>                                        
             <?php foreach ($this->user->getPeople()->getPhone() AS $user_phone) { ?>
-                <div id="container-delete-phone-<?= $user_phone->getId() ?>" class="form-group">
+                <div id="container-delete-phone-<?= $user_phone->getId() ?>" class="form-group highlight">
                     <label class="col-md-2 control-label" id="label-ddd-<?= $user_phone->getId() ?>" for="input-ddd"><?= $this->translate('DDD') ?>: </label>
                     <div class="col-md-3">                        
                         <input readonly class="form-control input-md" value="<?= $user_phone->getDdd() ?>" id="input-phone-<?= $user_phone->getId() ?>" name="ddd" type="text" >

@@ -51,6 +51,24 @@ class UserModel extends DefaultModel implements LoginInterface {
         return $this->getErrors() ? false : true;
     }
 
+    /**
+     * @return \Core\Entity\Adress
+     */
+    public function addUserAdress(array $params) {
+        if ($this->_adressModel->checkAdressData($params)) {
+            try {
+                $entity_adress = $this->_adressModel->addPeopleAdress($this->getLoggedUserPeople(), $params);
+                $this->_em->flush();
+                $this->_em->clear();
+            } catch (Exception $e) {
+                $this->addError(array('code' => $e->getCode(), 'message' => 'Error on create a new adress'));
+                $this->addError(array('code' => $e->getCode(), 'message' => $e->getMessage()));
+                $this->_em->rollback();
+            }
+            return $entity_adress;
+        }
+    }
+
     public function addUserPhone($ddd, $phone) {
         $current_user = $this->getLoggedUser();
         if (!$this->getErrors()) {
@@ -91,6 +109,41 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
+    public function getDocumentTypeExists($document_type) {
+        $entity = $this->_em->getRepository('\Core\Entity\DocumentType');
+        $doc = $entity->findOneBy(array(
+            'documentType' => $document_type,
+            'peopleType' => 'F'
+        ));
+        if (!$doc) {
+            $this->addError('This type of document does not exist');
+        }
+
+        return $doc;
+    }
+
+    public function addUserDocument($document, $document_type) {
+        $current_user = $this->getLoggedUser();
+        $documentType = $this->getDocumentTypeExists($document_type);
+        $this->documentExists($document, $documentType);
+        if (!$this->getErrors()) {
+            $entity = new \Core\Entity\Document();
+            $entity->setPeople($current_user->getPeople());
+            $entity->setDocument($document);
+            $entity->setDocumentType($documentType);
+            $this->_em->persist($entity);
+
+            $this->_em->flush();
+            $this->_em->clear();
+            return array(
+                'id' => $entity->getId(),
+                'document' => $entity->getDocument(),
+                'document_type' => $entity->getDocumentType()->getDocumentType(),
+                'image' => $entity->getImage() ? $entity->getImage()->getUrl() : null
+            );
+        }
+    }
+
     public function addUser($username, $password, $confirm_password) {
         $current_user = $this->getLoggedUser();
 
@@ -115,6 +168,7 @@ class UserModel extends DefaultModel implements LoginInterface {
         $entity_people = new \Core\Entity\People();
         $entity_people->setName($name);
         $entity_people->setPeopleType('F');
+        $entity_people->setAlias('');
         $this->_em->persist($entity_people);
 
         $entity_email = new \Core\Entity\Email();
@@ -148,10 +202,6 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
-    public function changeUser($username, $name, $password, $confirm_password) {
-        
-    }
-
     public function createAccount($username, $email, $name, $password, $confirm_password) {
         $entity_people = $this->createUser($username, $email, $name, $password, $confirm_password);
         $entity_people ? $this->login($username, $password) : false;
@@ -164,6 +214,29 @@ class UserModel extends DefaultModel implements LoginInterface {
             $this->addError(array('message' => 'User %1$s already exists!', 'values' => array('user' => $username)));
         }
         return $user;
+    }
+
+    public function getDocumentTypes() {
+        $entity = $this->_em->getRepository('\Core\Entity\DocumentType');
+        return $entity->findBy(array('peopleType' => 'F'));
+    }
+
+    public function documentExists($document, $document_type) {
+        $entity = $this->_em->getRepository('\Core\Entity\Document');
+        $doc = $entity->findOneBy(array('document' => $document));
+
+        $documentType = $entity->findOneBy(array(
+            'documentType' => $document_type,
+            'people' => $this->getLoggedUser()->getPeople()
+        ));
+
+        if ($documentType) {
+            $this->addError(array('message' => 'Document type (%1$s) already added!', 'values' => array('docType' => $document_type->getDocumentType())));
+        }
+        if ($doc) {
+            $this->addError(array('message' => 'Document %1$s in use!', 'values' => array('doc' => $document)));
+        }
+        return $doc;
     }
 
     public function emailExists($email) {
@@ -271,6 +344,51 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
+    public function deleteAdress($id) {
+        if (!$this->loggedIn()) {
+            $this->addError('You do not have permission to delete this!');
+        } elseif (!$id) {
+            $this->addError('Adress id not informed!');
+        } elseif (count($this->getLoggedUser()->getPeople()->getAdress()) < 2) {
+            $this->addError('You need at least one adress. Please add another adress before removing this one.');
+        } else {
+            $entity = $this->_em->getRepository('\Core\Entity\Adress')->findOneBy(array(
+                'id' => $id,
+                'people' => $this->getLoggedUser()->getPeople()
+            ));
+            if ($entity) {
+                $entity->setPeople(null);
+                $this->_em->persist($entity);
+                $this->_em->flush();
+                $this->_em->clear();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public function deleteDocument($id) {
+        if (!$this->loggedIn()) {
+            $this->addError('You do not have permission to delete this!');
+        } elseif (!$id) {
+            $this->addError('Document id not informed!');
+        } else {
+            $entity = $this->_em->getRepository('\Core\Entity\Document')->findOneBy(array(
+                'id' => $id,
+                'people' => $this->getLoggedUser()->getPeople()
+            ));
+            if ($entity) {
+                $this->_em->remove($entity);
+                $this->_em->flush();
+                $this->_em->clear();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public function deleteEmail($id) {
         if (!$this->loggedIn()) {
             $this->addError('You do not have permission to delete this!');
@@ -319,7 +437,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function getLoggedUserPeople() {
-        self::$_user_people = self::$_user_people ? self::$_user_people : $this->getLoggedUser() ? $this->getLoggedUser()->getPeople() : false;        
+        self::$_user_people = self::$_user_people ? self::$_user_people : $this->getLoggedUser() ? $this->getLoggedUser()->getPeople() : false;
         return self::$_user_people;
     }
 

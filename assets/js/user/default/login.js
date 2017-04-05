@@ -4,24 +4,6 @@ define('user-default-login', ['jquery', 'core', 'jquery-form-validator','bootstr
         $('.profile-image').on('load', function () {
             $(this).fadeIn(1000);
         });
-        $('#login-form').submit(function (e) {
-            e.preventDefault();
-            if ($(this).isValid()) {
-                $.ajax({
-                    url: $(this).attr('action') + '.json',
-                    data: $(this).serialize(),
-                    method: 'POST',
-                    dataType: 'json',
-                    global: false,
-                    success: function (data) {
-                        $('#wait-modal').modal('hide');
-                        if (data.response && data.response.success) {
-                            window.location.href = $('#login-form').data('success-url') ? $('#login-form').data('success-url') : '/';
-                        }
-                    }
-                });
-            }
-        });
         $('#username').blur(function () {
             var e = $(this);
             setTimeout(function () {

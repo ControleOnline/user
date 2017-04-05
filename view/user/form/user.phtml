@@ -5,7 +5,7 @@
             <!-- Form Name -->
             <i title="<?= $this->translate('Add new user for this people') ?>" class="fa fa-plus pull-right" data-add-form="/user/add-user.form" aria-hidden="true"></i>
             <legend><?= $this->translate('Users') ?></legend>                                        
-            <div id="container-delete-user-{id}" class="form-group hidden clone" data-clone="add-user">
+            <div id="container-delete-user-{id}" class="form-group hidden clone highlight" data-clone="add-user">
                 <label class="col-md-4 control-label" id="label-username-{id}" for="input-username"><?= $this->translate('Username') ?>: </label>
                 <div class="col-md-4">                        
                     <input readonly class="form-control input-md" value="" id="input-username-{id}" name="username" type="text" >
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <?php foreach ($this->userPeople->getUser() AS $user) { ?>
-                <div id="container-delete-user-<?= $user->getId() ?>" class="form-group">
+                <div id="container-delete-user-<?= $user->getId() ?>" class="form-group highlight">
                     <label class="col-md-4 control-label" id="label-username-<?= $user->getId() ?>" for="input-username"><?= $this->translate('Username') ?>: </label>
                     <div class="col-md-4">                        
                         <input readonly class="form-control input-md" value="<?= $user->getUsername() ?>" id="input-username-<?= $user->getId() ?>" name="username" type="text" >
@@ -28,7 +28,6 @@
                         </button>
                     </div>
                 </div>
-
             <?php } ?>
         </form>
     </fieldset>

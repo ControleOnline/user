@@ -5,7 +5,7 @@
             <!-- Form Name -->
             <i title="<?= $this->translate('Add new e-mail for this user') ?>" class="fa fa-plus pull-right" data-add-form="/user/add-email.form" aria-hidden="true"></i>
             <legend><?= $this->translate('Emails') ?></legend>            
-            <div id="container-delete-email-{id}" class="form-group hidden clone" data-clone="add-user-email">
+            <div id="container-delete-email-{id}" class="form-group hidden clone highlight" data-clone="add-user-email">
                 <label class="col-md-4 control-label" id="label-mail-{id}" for="input-mail"><?= $this->translate('Email') ?>: </label>
                 <div class="col-md-4">                        
                     <input readonly class="form-control input-md" value="" id="input-mail-{id}" name="email" type="text" >
@@ -15,10 +15,9 @@
                         <?= $this->translate('Delete') ?>
                     </button>
                 </div>
-            </div>                                        
-            <?php                                     
-            foreach ($this->user->getPeople()->getEmail() AS $user_email) { ?>
-                <div id="container-delete-email-<?= $user_email->getId() ?>" class="form-group">
+            </div>
+            <?php foreach ($this->user->getPeople()->getEmail() AS $user_email) { ?>
+                <div id="container-delete-email-<?= $user_email->getId() ?>" class="form-group highlight">
                     <label class="col-md-4 control-label" id="label-mail-<?= $user_email->getId() ?>" for="input-mail"><?= $this->translate('Email') ?>: </label>
                     <div class="col-md-4">                        
                         <input readonly class="form-control input-md" value="<?= $user_email->getEmail() ?>" id="input-mail-<?= $user_email->getId() ?>" name="mail" type="text" >
