@@ -24,15 +24,13 @@ class DefaultController extends \Core\Controller\DefaultController {
         $username = $this->params()->fromPost('username');
         $password = $this->params()->fromPost('password');
         $login_referrer = $this->params()->fromQuery('login-referrer');
-
-        if ((!$username || !$password) && $this->_userModel->loggedIn()) {
+        if ((!$username || !$password) && $this->_userModel->loggedIn()) {            
             return $this->redirect()->toUrl($login_referrer ?: $this->_renderer->basePath('/user/profile'));
-        } else {
+        } elseif ($username && $password) {            
             $this->_userModel->login($username, $password);
             $this->_view->setVariables(Format::returnData($this->_userModel->getLoggedUser()));
-            $this->_view->setVariable('login_referrer', $login_referrer);
-        }
-
+        }        
+        $this->_view->setVariable('login_referrer', $login_referrer);        
         return $this->_view;
     }
 
@@ -40,7 +38,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         $this->_userModel->logout();
-        return $this->redirect()->toUrl($this->_renderer->basePath('/user/login'));
+        return \Core\Helper\View::redirectToLogin($this->_renderer, $this->getResponse(), $this->getRequest(), $this->redirect(), false);
     }
 
     public function indexAction() {
@@ -49,14 +47,8 @@ class DefaultController extends \Core\Controller\DefaultController {
         if ($this->_userModel->loggedIn()) {
             return $this->redirect()->toUrl($this->_renderer->basePath('/user/profile'));
         } else {
-            return $this->redirectToLogin();
+            return \Core\Helper\View::redirectToLogin($this->_renderer, $this->getResponse(), $this->getRequest(), $this->redirect());
         }
-    }
-
-    public function redirectToLogin() {
-        $url = $this->getRequest()->getUri()->getPath();
-        $params = $this->getRequest()->getUri()->getQueryAsArray() ?: array();
-        return $this->redirect()->toUrl($this->_renderer->basePath('/user/login?login-referrer=' . $url . rawurlencode('&' . http_build_query($params))));
     }
 
     public function userInUseAction() {
@@ -154,7 +146,7 @@ class DefaultController extends \Core\Controller\DefaultController {
         $this->_userModel = new UserModel();
         $this->_userModel->initialize($this->serviceLocator);
         if (!$this->_userModel->loggedIn()) {
-            return $this->redirectToLogin();
+            return \Core\Helper\View::redirectToLogin($this->_renderer, $this->getResponse(), $this->getRequest(), $this->redirect());
         }
         return $this->_view;
     }

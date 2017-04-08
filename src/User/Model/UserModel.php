@@ -218,7 +218,7 @@ class UserModel extends DefaultModel implements LoginInterface {
 
     public function getDocumentTypes() {
         $entity = $this->_em->getRepository('\Core\Entity\DocumentType');
-        return $entity->findBy(array('peopleType' => 'F'));
+        return $entity->findBy(array('peopleType' => 'F'), array('documentType' => 'ASC'), 100);
     }
 
     public function documentExists($document, $document_type) {
@@ -317,7 +317,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function getUserCompany() {
-        self::$_company = self::$_company ?: count($this->getLoggedUser()->getPeople()->getPeopleEmployee()) > 0 ? $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany() : null;
+        self::$_company = self::$_company ?: $this->getLoggedUser() && $this->getLoggedUser()->getPeople() && count($this->getLoggedUser()->getPeople()->getPeopleEmployee()) > 0 ? $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany() : null;
         return self::$_company;
     }
 
@@ -436,9 +436,14 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
+    /**
+     * @return \Core\Entity\People
+     */
     public function getLoggedUserPeople() {
-        self::$_user_people = self::$_user_people ? self::$_user_people : $this->getLoggedUser() ? $this->getLoggedUser()->getPeople() : false;
-        return self::$_user_people;
+        if ($this->loggedIn()) {
+            self::$_user_people = self::$_user_people ? self::$_user_people : $this->getLoggedUser() && get_class($this->getLoggedUser()) == 'Core\Entity\User' ? $this->getLoggedUser()->getPeople() : false;
+            return self::$_user_people;
+        }
     }
 
     /**
@@ -447,8 +452,10 @@ class UserModel extends DefaultModel implements LoginInterface {
     public function getLoggedUser() {
         if ($this->loggedIn()) {
             self::$_user = self::$_user ?: $this->entity->find($this->_session->user->id);
-            return self::$_user;
+        } else {
+            self::$_user = false;
         }
+        return self::$_user;
     }
 
     public function getUserSession() {
