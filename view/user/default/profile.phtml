@@ -19,9 +19,9 @@
                         <span class="glyphicon glyphicon-earphone"></span> <?= $this->translate('Phones') ?>
                     </a>
                 </li>
-                <li role="user-adress" class="">
-                    <a href="#user-adress" aria-controls="user-adress" role="tab" data-toggle="tab" aria-expanded="true">                        
-                        <span class="glyphicon glyphicon-home"></span> <?= $this->translate('Adress') ?>
+                <li role="user-address" class="">
+                    <a href="#user-address" aria-controls="user-address" role="tab" data-toggle="tab" aria-expanded="true">                        
+                        <span class="glyphicon glyphicon-home"></span> <?= $this->translate('Address') ?>
                     </a>
                 </li>
                 <li role="user-email" class="">
@@ -44,8 +44,8 @@
                 <div role="tabpanel" class="tab-pane active" id="user-phone"> 
                     <?= $this->render("user/form/user-phone.phtml"); ?>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="user-adress">                        
-                    <?= $this->render("user/form/user-adress.phtml"); ?>
+                <div role="tabpanel" class="tab-pane" id="user-address">                        
+                    <?= $this->render("user/form/user-address.phtml"); ?>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="user-email"> 
                     <?= $this->render("user/form/user-email.phtml"); ?>

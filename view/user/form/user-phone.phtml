@@ -3,7 +3,10 @@
     <fieldset>
         <form class="api-form form-horizontal" action="/user-phone.form" method="POST" name="form-user-phone" id="form-user-phone" role="form" data-childs="[&quot;people&quot;,&quot;log&quot;]">
             <!-- Form Name -->
-            <i title="<?=$this->translate('Add new phone for this user')?>" class="fa fa-plus pull-right" data-add-form="/user/add-phone.form" aria-hidden="true"></i>
+            <button title="<?= $this->translate('Add new phone for this user') ?>" type="button" class="btn btn-success pull-right" data-add-form="/user/add-phone.form">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <?= $this->translate('Add') ?>
+            </button>            
             <legend><?= $this->translate('Phones') ?></legend>                                        
             <div id="container-delete-phone-{id}" class="form-group hidden clone highlight" data-clone="add-user-phone">
                 <label class="col-md-2 control-label" id="label-ddd-{id}" for="input-ddd"><?= $this->translate('DDD') ?>: </label>

@@ -6,7 +6,8 @@ use Core\Interfaces\LoginInterface;
 use Core\Model\DefaultModel;
 use Zend\Session\Container;
 use User\Model\ComplexityPasswordmodel;
-use Core\Model\AdressModel;
+use Core\Model\AddressModel;
+use Core\Helper\Format;
 
 class UserModel extends DefaultModel implements LoginInterface {
 
@@ -16,14 +17,26 @@ class UserModel extends DefaultModel implements LoginInterface {
     protected $_session;
 
     /**
-     * @var \Core\Model\AdressModel
+     * @var \Core\Model\AddressModel
      */
-    protected $_adressModel;
+    protected $_addressModel;
     protected $_password;
     protected $_hash;
     protected $_salt;
+
+    /**
+     * @var \Core\Entity\User
+     */
     protected static $_user;
+
+    /**
+     * @var \Core\Entity\People
+     */
     protected static $_user_people;
+
+    /**
+     * @var \Core\Entity\People
+     */
     protected static $_company;
 
     const COST = 10;
@@ -34,8 +47,8 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function initialize(\Zend\ServiceManager\ServiceManager $serviceLocator) {
-        $this->_adressModel = new AdressModel();
-        $this->_adressModel->initialize($serviceLocator);
+        $this->_addressModel = new AddressModel();
+        $this->_addressModel->initialize($serviceLocator);
         parent::initialize($serviceLocator);
     }
 
@@ -52,20 +65,18 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     /**
-     * @return \Core\Entity\Adress
+     * @return \Core\Entity\Address
      */
-    public function addUserAdress(array $params) {
-        if ($this->_adressModel->checkAdressData($params)) {
+    public function addUserAddress(array $params) {
+        if ($this->_addressModel->checkAddressData($params)) {
             try {
-                $entity_adress = $this->_adressModel->addPeopleAdress($this->getLoggedUserPeople(), $params);
-                $this->_em->flush();
-                $this->_em->clear();
+                $entity_address = $this->_addressModel->addPeopleAddress($this->getLoggedUserPeople(), $params);
             } catch (Exception $e) {
-                $this->addError(array('code' => $e->getCode(), 'message' => 'Error on create a new adress'));
+                $this->addError(array('code' => $e->getCode(), 'message' => 'Error on create a new address'));
                 $this->addError(array('code' => $e->getCode(), 'message' => $e->getMessage()));
                 $this->_em->rollback();
             }
-            return $entity_adress;
+            return $entity_address;
         }
     }
 
@@ -74,12 +85,10 @@ class UserModel extends DefaultModel implements LoginInterface {
         if (!$this->getErrors()) {
             $entity_phone = new \Core\Entity\Phone();
             $entity_phone->setPeople($current_user->getPeople());
-            $entity_phone->setDdd($ddd);
-            $entity_phone->setPhone($phone);
+            $entity_phone->setDdd(Format::onlyNumbers($ddd));
+            $entity_phone->setPhone(Format::onlyNumbers($phone));
             $entity_phone->setConfirmed(false);
             $this->_em->persist($entity_phone);
-            $this->_em->flush();
-            $this->_em->clear();
             return array(
                 'id' => $entity_phone->getId(),
                 'ddd' => $entity_phone->getDdd(),
@@ -99,8 +108,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             $entity_email->setConfirmed(false);
             $this->_em->persist($entity_email);
 
-            $this->_em->flush();
-            $this->_em->clear();
+
+
             return array(
                 'id' => $entity_email->getId(),
                 'email' => $entity_email->getEmail(),
@@ -129,12 +138,12 @@ class UserModel extends DefaultModel implements LoginInterface {
         if (!$this->getErrors()) {
             $entity = new \Core\Entity\Document();
             $entity->setPeople($current_user->getPeople());
-            $entity->setDocument($document);
+            $entity->setDocument(Format::onlyNumbers($document));
             $entity->setDocumentType($documentType);
             $this->_em->persist($entity);
 
-            $this->_em->flush();
-            $this->_em->clear();
+
+
             return array(
                 'id' => $entity->getId(),
                 'document' => $entity->getDocument(),
@@ -154,8 +163,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             $entity_user->setHash($this->getHash($password));
             $this->_em->persist($entity_user);
 
-            $this->_em->flush();
-            $this->_em->clear();
+
+
             return array(
                 'id' => $entity_user->getId(),
                 'username' => $entity_user->getUsername()
@@ -163,24 +172,38 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
-    protected function persistData($username, $email, $name, $password) {
+    protected function getDefaultLanguage() {
+        $companyModel = new \Company\Model\CompanyModel();
+        $companyModel->initialize($this->getServiceLocator());
+        $company = $companyModel->getDefaultLoggedCompany() ? : $companyModel->getDefaultCompany();
+        return $company->getLanguage();
+    }
 
+    public function getDefaultUserLanguage() {
+        return $this->getUserCompany() ? $this->getUserCompany()->getLanguage() : $this->getDefaultLanguage();
+    }
+
+    protected function persistData($username, $email, $name, $password) {
         $entity_people = new \Core\Entity\People();
         $entity_people->setName($name);
         $entity_people->setPeopleType('F');
+        $entity_people->setLanguage($this->getDefaultUserLanguage());
         $entity_people->setAlias('');
         $this->_em->persist($entity_people);
+        $this->_em->flush($entity_people);
 
         $entity_email = new \Core\Entity\Email();
         $entity_email->setPeople($entity_people);
         $entity_email->setEmail($email);
         $this->_em->persist($entity_email);
+        $this->_em->flush($entity_email);
 
         $entity_user = new \Core\Entity\User();
         $entity_user->setPeople($entity_people);
         $entity_user->setUsername($username);
         $entity_user->setHash($this->getHash($password));
         $this->_em->persist($entity_user);
+        $this->_em->flush($entity_user);
 
         return $entity_user;
     }
@@ -192,8 +215,6 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
         try {
             $entity_people = $this->persistData($username, $email, $name, $password);
-            $this->_em->flush();
-            $this->_em->clear();
             return $entity_people;
         } catch (Exception $e) {
             $this->addError(array('code' => $e->getCode(), 'message' => 'Error on create a new user'));
@@ -202,8 +223,38 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
-    public function createAccount($username, $email, $name, $password, $confirm_password) {
+    public function createClientLink($people) {
+        $companyModel = new \Company\Model\CompanyModel();
+        $companyModel->initialize($this->getServiceLocator());
+        $company = $companyModel->getDefaultLoggedCompany() ? : $companyModel->getDefaultCompany();
+        $entity = new \Core\Entity\ClientPeople();
+        $entity->setClient($people);
+        $entity->setCompanyId($company->getId());
+        $this->_em->persist($entity);
+        $this->_em->flush($entity);
+        return $entity;
+    }
+
+    public function createLink($people, $link_type = 'client') {
+        $link_name = ucfirst($link_type);
+        $set_name = 'set' . $link_name;
+        $entity_name = '\Core\Entity\\' . $link_name . 'People';
+        if (class_exists($entity_name)) {
+            $companyModel = new \Company\Model\CompanyModel();
+            $companyModel->initialize($this->getServiceLocator());
+            $company = $companyModel->getDefaultLoggedCompany() ? : $companyModel->getDefaultCompany();
+            $entity = new $entity_name();
+            $entity->$set_name($people);
+            $entity->setCompanyId($company->getId());
+            $this->_em->persist($entity);
+            $this->_em->flush($entity);
+            return $entity;
+        }
+    }
+
+    public function createAccount($username, $email, $name, $password, $confirm_password, $link_type) {
         $entity_people = $this->createUser($username, $email, $name, $password, $confirm_password);
+        $entity_people ? $this->createLink($entity_people->getPeople(), $link_type) : false;
         $entity_people ? $this->login($username, $password) : false;
         return $entity_people;
     }
@@ -223,29 +274,50 @@ class UserModel extends DefaultModel implements LoginInterface {
 
     public function documentExists($document, $document_type) {
         $entity = $this->_em->getRepository('\Core\Entity\Document');
-        $doc = $entity->findOneBy(array('document' => $document));
+        $doc = $entity->findOneBy(array('document' => Format::onlyNumbers($document)));
 
         $documentType = $entity->findOneBy(array(
             'documentType' => $document_type,
             'people' => $this->getLoggedUser()->getPeople()
         ));
 
-        if ($documentType) {
-            $this->addError(array('message' => 'Document type (%1$s) already added!', 'values' => array('docType' => $document_type->getDocumentType())));
-        }
         if ($doc) {
             $this->addError(array('message' => 'Document %1$s in use!', 'values' => array('doc' => $document)));
         }
         return $doc;
     }
 
+    /**
+     * @return \Core\Entity\Email
+     */
     public function emailExists($email) {
-        $entity_email = $this->_em->getRepository('\Core\Entity\Email');
-        $mail = $entity_email->findOneBy(array('email' => $email));
+        $mail = $this->getEmail($email);
         if ($mail) {
             $this->addError(array('message' => 'Email %1$s in use!', 'values' => array('user' => $email)));
         }
         return $mail;
+    }
+
+    /**
+     * @return \Core\Entity\Email
+     */
+    public function getEmail($email) {
+        $entity_email = $this->_em->getRepository('\Core\Entity\Email');
+        return $entity_email->findOneBy(array('email' => $email));
+    }
+
+    public function checkLoginFromKey(\Zend\Mvc\MvcEvent $e) {
+        $key = $e->getRequest()->getQuery('key')? : $e->getRequest()->getPost('key');
+        if ($key) {
+            $user = $this->entity->findOneBy(array('api_key' => $key));
+            if ($user) {
+                $this->_session->user = new \stdClass();
+                $this->_session->user->id = $user->getId();
+                $this->_session->user->username = $user->getUsername();
+            } else {
+                $this->logout();
+            }
+        }
     }
 
     public function login($username, $password) {
@@ -300,7 +372,6 @@ class UserModel extends DefaultModel implements LoginInterface {
         $hash = $this->getHash($password);
         $entity->setHash($hash);
         $this->_em->persist($entity);
-        $this->_em->flush();
     }
 
     protected function getStorePassword($username) {
@@ -317,7 +388,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function getUserCompany() {
-        self::$_company = self::$_company ?: $this->getLoggedUser() && $this->getLoggedUser()->getPeople() && count($this->getLoggedUser()->getPeople()->getPeopleEmployee()) > 0 ? $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany() : null;
+        self::$_company = self::$_company ? : $this->getLoggedUser() && $this->getLoggedUser()->getPeople() && count($this->getLoggedUser()->getPeople()->getPeopleEmployee()) > 0 ? $this->getLoggedUser()->getPeople()->getPeopleEmployee()[0]->getCompany() : null;
         return self::$_company;
     }
 
@@ -335,8 +406,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             ));
             if ($entity) {
                 $this->_em->remove($entity);
-                $this->_em->flush();
-                $this->_em->clear();
+
+
                 return true;
             } else {
                 return false;
@@ -344,23 +415,23 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
-    public function deleteAdress($id) {
+    public function deleteAddress($id) {
         if (!$this->loggedIn()) {
             $this->addError('You do not have permission to delete this!');
         } elseif (!$id) {
-            $this->addError('Adress id not informed!');
-        } elseif (count($this->getLoggedUser()->getPeople()->getAdress()) < 2) {
-            $this->addError('You need at least one adress. Please add another adress before removing this one.');
+            $this->addError('Address id not informed!');
+        } elseif (count($this->getLoggedUser()->getPeople()->getAddress()) < 2) {
+            $this->addError('You need at least one address. Please add another address before removing this one.');
         } else {
-            $entity = $this->_em->getRepository('\Core\Entity\Adress')->findOneBy(array(
+            $entity = $this->_em->getRepository('\Core\Entity\Address')->findOneBy(array(
                 'id' => $id,
                 'people' => $this->getLoggedUser()->getPeople()
             ));
             if ($entity) {
                 $entity->setPeople(null);
                 $this->_em->persist($entity);
-                $this->_em->flush();
-                $this->_em->clear();
+
+
                 return true;
             } else {
                 return false;
@@ -380,8 +451,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             ));
             if ($entity) {
                 $this->_em->remove($entity);
-                $this->_em->flush();
-                $this->_em->clear();
+
+
                 return true;
             } else {
                 return false;
@@ -403,8 +474,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             ));
             if ($entity) {
                 $this->_em->remove($entity);
-                $this->_em->flush();
-                $this->_em->clear();
+
+
                 return true;
             } else {
                 return false;
@@ -424,8 +495,8 @@ class UserModel extends DefaultModel implements LoginInterface {
             ));
             if ($entity) {
                 $this->_em->remove($entity);
-                $this->_em->flush();
-                $this->_em->clear();
+
+
                 return true;
             } else {
                 return false;
@@ -451,7 +522,7 @@ class UserModel extends DefaultModel implements LoginInterface {
      */
     public function getLoggedUser() {
         if ($this->loggedIn()) {
-            self::$_user = self::$_user ?: $this->entity->find($this->_session->user->id);
+            self::$_user = self::$_user ? : $this->entity->find($this->_session->user->id);
         } else {
             self::$_user = false;
         }

@@ -3,7 +3,10 @@
     <fieldset>
         <form class="api-form form-horizontal" action="/user-email.form" method="POST" name="form-user-email" id="form-user-email" role="form" data-childs="[&quot;people&quot;,&quot;log&quot;]">
             <!-- Form Name -->
-            <i title="<?= $this->translate('Add new e-mail for this user') ?>" class="fa fa-plus pull-right" data-add-form="/user/add-email.form" aria-hidden="true"></i>
+            <button title="<?= $this->translate('Add new e-mail for this user') ?>" type="button" class="btn btn-success pull-right" data-add-form="/user/add-email.form">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <?= $this->translate('Add') ?>
+            </button>            
             <legend><?= $this->translate('Emails') ?></legend>            
             <div id="container-delete-email-{id}" class="form-group hidden clone highlight" data-clone="add-user-email">
                 <label class="col-md-4 control-label" id="label-mail-{id}" for="input-mail"><?= $this->translate('Email') ?>: </label>

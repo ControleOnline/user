@@ -3,7 +3,10 @@
     <fieldset>
         <form class="api-form form-horizontal" action="/user.form" method="POST" name="form-user" id="form-user" role="form" data-childs="[&quot;people&quot;,&quot;log&quot;]">
             <!-- Form Name -->
-            <i title="<?= $this->translate('Add new user for this people') ?>" class="fa fa-plus pull-right" data-add-form="/user/add-user.form" aria-hidden="true"></i>
+            <button title="<?= $this->translate('Add new user for this people') ?>" type="button" class="btn btn-success pull-right" data-add-form="/user/add-user.form">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                <?= $this->translate('Add') ?>
+            </button>            
             <legend><?= $this->translate('Users') ?></legend>                                        
             <div id="container-delete-user-{id}" class="form-group hidden clone highlight" data-clone="add-user">
                 <label class="col-md-4 control-label" id="label-username-{id}" for="input-username"><?= $this->translate('Username') ?>: </label>
@@ -27,6 +30,12 @@
                             <?= $this->translate('Delete') ?>
                         </button>
                     </div>
+                    <div class="col-md-12 no-padding">
+                        <label class="col-md-4 control-label" id="label-api-key-<?= $user->getId() ?>" for="input-api-key"><?= $this->translate('Api key') ?>: </label>
+                        <div class="col-md-8">                        
+                            <input readonly class="form-control input-md" value="<?= $user->getApiKey() ?>" id="input-api-key-<?= $user->getId() ?>" name="api-key" type="text" >
+                        </div>                    
+                    </div>                     
                 </div>
             <?php } ?>
         </form>
@@ -63,7 +72,7 @@
             <div class="form-group">
                 <label class="col-md-4 control-label" for="change-password"></label>
                 <div class="col-md-4">
-                    <button id="change" name="change-password" class="btn btn-danger"><?= $this->translate('Change Passord') ?></button>
+                    <button id="change" name="change-password" class="btn btn-danger"><?= $this->translate('Change Password') ?></button>
                 </div>                                                                                        
             </div>
         </fieldset>
