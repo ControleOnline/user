@@ -307,7 +307,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     }
 
     public function checkLoginFromKey(\Zend\Mvc\MvcEvent $e) {
-        $key = $e->getRequest()->getQuery('key')? : $e->getRequest()->getPost('key');
+        $key = $e->getRequest()->getQuery('api-key')? : $e->getRequest()->getPost('api-key');
         if ($key) {
             $user = $this->entity->findOneBy(array('api_key' => $key));
             if ($user) {
