@@ -98,6 +98,22 @@ class UserModel extends DefaultModel implements LoginInterface {
         }
     }
 
+    public function addCorporateUserEmail($email) {
+        $current_user = $this->getLoggedUser();
+        if (!$this->getEmail($email)) {
+            $entity_email = new \Core\Entity\Email();
+            $entity_email->setPeople($current_user->getPeople());
+            $entity_email->setEmail($email);
+            $entity_email->setConfirmed(false);
+            $this->_em->persist($entity_email);
+            return array(
+                'id' => $entity_email->getId(),
+                'email' => $entity_email->getEmail(),
+                'confirmed' => $entity_email->getConfirmed()
+            );
+        }
+    }
+
     public function addUserEmail($email) {
         $current_user = $this->getLoggedUser();
         $this->emailExists($email);
