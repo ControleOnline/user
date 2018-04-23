@@ -100,7 +100,7 @@ class UserModel extends DefaultModel implements LoginInterface {
 
     public function addCorporateUserEmail($email) {
         $current_user = $this->getLoggedUser();
-        if (!$this->getEmail($email)) {
+        if (!$this->getEmail($email) && $current_user) {
             $entity_email = new \Core\Entity\Email();
             $entity_email->setPeople($current_user->getPeople());
             $entity_email->setEmail($email);
@@ -117,7 +117,7 @@ class UserModel extends DefaultModel implements LoginInterface {
     public function addUserEmail($email) {
         $current_user = $this->getLoggedUser();
         $this->emailExists($email);
-        if (!$this->getErrors()) {
+        if (!$this->getErrors() && $current_user) {
             $entity_email = new \Core\Entity\Email();
             $entity_email->setPeople($current_user->getPeople());
             $entity_email->setEmail($email);
